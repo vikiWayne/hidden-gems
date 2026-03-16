@@ -11,7 +11,7 @@ This document provides structured documentation for AI agents working on the Pos
 1. **Drop** messages or treasure chests at their current GPS location
 2. **Explore** nearby geo-tagged content on a map (within 2 km)
 3. **Unlock** messages by walking within 20 meters
-4. **Manage** their own tags in My Tags
+4. **Manage** their own tags in My Tags (and My Collection)
 5. **Compete** via a leaderboard (mock data)
 
 ### Core Concepts
@@ -24,6 +24,7 @@ This document provides structured documentation for AI agents working on the Pos
 | **Proximity** | Distance-based states: `far` (>80 m), `near` (20–80 m), `unlocked` (≤20 m) |
 | **Chest Hunter** | Mode when a chest is within 200 m; gold-themed UI |
 | **Stack** | Multiple messages/chests at the same location; shown as one marker with expandable list |
+| **Loot Item** | Explorable items mapped dynamically such as avatar, diamond, cash_chest, loot_box, surprise, powerup, bomb, snake |
 
 ---
 
@@ -31,7 +32,7 @@ This document provides structured documentation for AI agents working on the Pos
 
 | Layer | Technologies |
 |-------|--------------|
-| **Frontend** | React 19, TypeScript, Vite 7, Tailwind CSS 4, Framer Motion, Zustand, React-Leaflet, Lucide React |
+| **Frontend** | React 19, TypeScript, Vite 7, Tailwind CSS 4, Framer Motion, Zustand, React-Leaflet, Lucide React, React Router |
 | **Backend** | Node.js, Express 5, TypeScript |
 | **Map** | Leaflet, Stadia Maps (Alidade Smooth Dark for gaming theme) |
 | **Build** | `tsc` (backend), Vite (frontend) |
@@ -44,7 +45,7 @@ This document provides structured documentation for AI agents working on the Pos
 
 ## 3. Directory Structure
 
-```
+```text
 postbox/
 ├── package.json              # Root: npm run dev, build
 ├── AGENTS.md                 # This file
@@ -55,52 +56,82 @@ postbox/
 │   ├── vite.config.ts        # Proxy /api → localhost:3001
 │   ├── index.html
 │   ├── src/
-│   │   ├── App.tsx           # Root: tabs, modals, FAB
-│   │   ├── main.tsx
+│   │   ├── App.tsx           # Providers, theme configurations
+│   │   ├── main.tsx          # App mounting
+│   │   ├── routes.tsx        # React Router routes definition
 │   │   ├── index.css         # Themes, Tailwind, map popup styles
 │   │   │
-│   │   ├── api/
-│   │   │   └── client.ts     # API client (fetch), types: NearbyChest, LeaderboardEntry
+│   │   ├── api/              # API clients & configuration
+│   │   │   ├── axios.ts      # Axios instance
+│   │   │   ├── client.ts     # Global API client wrappers (fetch)
+│   │   │   ├── index.ts      # API exports
+│   │   │   ├── types/        # API-specific TS types
+│   │   │   └── validators.ts # Payload validators
 │   │   │
-│   │   ├── components/
-│   │   │   ├── Header.tsx        # Title, TabNav, settings button
-│   │   │   ├── DropMessageModal  # Create message/chest
-│   │   │   ├── MapView.tsx       # Builds markers, groups by location
-│   │   │   ├── ProximityCard.tsx # Distance, progress, nearby list
-│   │   │   ├── TagUnlockedCard.tsx # Unlocked message content
+│   │   ├── assets/           # Static assets (images, icons)
+│   │   │
+│   │   ├── components/       # Reusable components
+│   │   │   ├── ChestHunterCard.tsx  # Chest proximity view
+│   │   │   ├── ClaimRewardFlyover.tsx # Reward animation flyover
+│   │   │   ├── DropMessageModal.tsx # Create message/chest
+│   │   │   ├── ErrorBoundary.tsx    # App fallbacks
+│   │   │   ├── GameButton.tsx       # Styled FAB
+│   │   │   ├── Header.tsx           # Title, TabNav, settings button
+│   │   │   ├── MapView.tsx          # Builds markers, groups by location
+│   │   │   ├── MentionInput.tsx     # @mention with friends suggestions
+│   │   │   ├── MiniMap.tsx          # Small static map
+│   │   │   ├── ProximityCard.tsx    # Distance, progress, nearby list
+│   │   │   ├── SettingsModal.tsx    # User settings config
 │   │   │   ├── StackItemDetailModal.tsx # Detail for item from stack popup
-│   │   │   ├── SettingsModal.tsx
-│   │   │   ├── MentionInput.tsx  # @mention with friends suggestions
-│   │   │   ├── MiniMap.tsx       # Small static map
-│   │   │   └── GameButton.tsx    # Styled FAB
+│   │   │   ├── TagUnlockedCard.tsx  # Unlocked message content
+│   │   │   └── ui/                  # Basic UI components
 │   │   │
-│   │   ├── hooks/
-│   │   │   ├── useLocation.ts         # Geolocation, userLocation
-│   │   │   ├── useNearbyMessages.ts  # Poll nearby messages
-│   │   │   ├── useNearbyChests.ts    # Poll nearby chests
-│   │   │   └── useProximityNotification.ts # Browser notification when near
+│   │   ├── config/           # App configuration
+│   │   │   ├── mapItems.ts   # Map rendering configs & item settings
+│   │   │   └── theme/        # Theme definitions
 │   │   │
-│   │   ├── lib/map/
-│   │   │   ├── index.ts       # Exports LeafletMap, types
-│   │   │   ├── leafletMap.tsx # Map implementation, markers, popups
-│   │   │   └── types.ts       # MapLocation, MapMarkerConfig, MapConfig
+│   │   ├── hooks/            # Custom React Hooks
+│   │   │   ├── useLocation.ts            # Geolocation, userLocation
+│   │   │   ├── useNearbyChests.ts        # Poll nearby chests
+│   │   │   ├── useNearbyMessages.ts      # Poll nearby messages
+│   │   │   ├── useProximityNotification.ts # Browser notification when near
+│   │   │   ├── useSeedNearby.ts          # Seed random entities close to user
+│   │   │   ├── useUserNearbyItems.ts     # Merge nearby data from multiple sources
+│   │   │   └── useViewportMapItems.ts    # Fetch map items within active viewport
 │   │   │
-│   │   ├── pages/
+│   │   ├── layouts/          # Application layout components
+│   │   │   └── AppLayout.tsx # Main application layout wrapper
+│   │   │
+│   │   ├── lib/              # Client libraries and abstractions
+│   │   │   └── map/          # LeafletMap, types, etc.
+│   │   │
+│   │   ├── pages/            # Page-level components
+│   │   │   ├── Explore/      # Explore sub-pages/components
 │   │   │   ├── ExplorePage.tsx   # Map + ProximityCard/TagUnlockedCard
-│   │   │   ├── MyTagsPage.tsx    # User's messages, edit modal
-│   │   │   └── LeaderboardPage.tsx
+│   │   │   ├── LeaderboardPage.tsx # Rank standings
+│   │   │   ├── MyCollectionPage.tsx # Collected items/chests
+│   │   │   └── MyTagsPage.tsx    # User's messages, edit modal
 │   │   │
-│   │   ├── store/
+│   │   ├── services/         # API Service integrations and React Query keys
+│   │   │   ├── chestsService.ts
+│   │   │   ├── leaderboardService.ts
+│   │   │   ├── messagesService.ts
+│   │   │   ├── myItemsService.ts
+│   │   │   ├── usersService.ts
+│   │   │   └── queryKeys.ts
+│   │   │
+│   │   ├── store/            # State management (Zustand)
 │   │   │   ├── useAppStore.ts    # Location, messages, selected, proximity
-│   │   │   ├── useUserStore.ts   # userId, username, friends
 │   │   │   ├── useGameStore.ts   # Chests, chest hunter mode
 │   │   │   ├── useMyTagsStore.ts # User-created messages
-│   │   │   └── useThemeStore.ts  # Light/dark/system
+│   │   │   ├── useThemeStore.ts  # Light/dark/system
+│   │   │   ├── useUserStore.ts   # userId, username, friends
+│   │   │   └── useViewportStore.ts # Map viewport boundaries tracking
 │   │   │
-│   │   └── types/
-│   │       └── index.ts          # Location, Message, NearbyMessage, CreatedMessage
+│   │   └── types/            # TypeScript type definitions
+│   │       └── index.ts      # Common types (Location, Message, etc.)
 │   │
-│   └── dist/                   # Build output
+│   └── dist/                 # Build output
 │
 └── backend/
     ├── package.json
@@ -226,6 +257,7 @@ In text: `@username[userId]` (e.g. `@Alex[user-1]`). Parse with regex `\[([^\]]+
 | **useGameStore** | — | `nearbyChests`, `chestHunterMode` |
 | **useMyTagsStore** | `taptag-my-tags` | `messages` (CreatedMessage[]), `addMessage`, `updateMessage`, `removeMessage` |
 | **useThemeStore** | `taptag-theme` | `theme`, `resolvedTheme` |
+| **useViewportStore** | — | Maps viewport bounds for `useViewportMapItems` |
 
 ### Important Actions
 
@@ -238,19 +270,21 @@ In text: `@username[userId]` (e.g. `@Alex[user-1]`). Parse with regex `\[([^\]]+
 
 ## 7. Component Hierarchy & Data Flow
 
-```
+```text
 App
+├── AppLayout wrapper
 ├── Header (tabs, settings)
-├── TabNav (Explore | My Tags | Leaderboard)
+├── TabNav (Explore | My Tags | Leaderboard | My Collection)
 ├── [ExplorePage]
 │   ├── MapView
 │   │   └── LeafletMap (markers, popups, StackPopupContent)
-│   ├── ProximityCard | TagUnlockedCard (based on proximityState)
+│   ├── ProximityCard | TagUnlockedCard | ChestHunterCard (based on proximityState)
 │   ├── StackItemDetailModal (when selectedStackItem)
 │   └── CTA button
 ├── [MyTagsPage]
 │   ├── TagCard (expandable, edit button)
 │   └── EditMessageModal
+├── [MyCollectionPage]
 ├── [LeaderboardPage]
 ├── GameButton (FAB) → DropMessageModal
 └── SettingsModal
@@ -259,8 +293,8 @@ App
 ### Hooks Used on ExplorePage
 
 - `useLocation()` — Sets `userLocation` in useAppStore
-- `useUserNearbyItems()` — Polls `/map/nearby`, sets `nearbyMessages`, `nearbyChests`, `nearbyLootItems`, proximity, theme
-- `useViewportMapItems()` — Fetches `/map/viewport` when map pans, sets viewport items for display
+- `useUserNearbyItems()` — Polls backend, synchronizes nearest items tracking, handles `proximityState`, theme updates.
+- `useViewportMapItems()` — Fetches specific objects relative to boundaries.
 - `useProximityNotification()` — Browser notification when `proximityState === 'near'` and `!selectedMessage.isOwn`
 
 ---
@@ -311,12 +345,13 @@ App
 
 1. Add handler in `backend/src/routes/`
 2. Mount in `backend/src/index.ts`
-3. Add method in `frontend/src/api/client.ts`
+3. Add method in `frontend/src/api/client.ts` or as a new `Service` in `frontend/src/services/`
 
 ### Adding a New Page
 
 1. Create page in `frontend/src/pages/`
-2. Add tab in `App.tsx` and `Header.tsx` (TabNav)
+2. Add route definition in `frontend/src/routes.tsx`
+3. Include tab in `Header.tsx` (TabNav)
 
 ### Adding Store State
 
