@@ -1,0 +1,54 @@
+1 - When a user found a message or chest, send the creator a notification.
+2 - If message is private, then tagged users get a notification.
+3 - When a chest is found, xp is added to the user's account and chest creator account.
+4 - To create a chest, xp from user's account will be used.
+5 - User can purchase xp and level up.
+6 - Moving away from chest/message notification.
+7 - The chest/message user created are shown in different color in map - also available in "My Tags"
+8 - User is able to find who all read message or got chest.
+9 - Chest/Message can be deleted by creator.
+10 - Chest/Message can be created for a time period.
+11 - Proximity Lock - User can drop a message in exact location or within a radius of 50m. the pin can be moved within 50m radius ONLY.
+12 - Ranking level
+
+        Option 1: The "Treasure Hunter" Theme (Best if the focus is on Chests)
+        This theme leans heavily into the gamification of finding hidden chests and exploring the map.
+
+        Level 1: Novice Seeker (0 XP)
+        Level 2: Local Scout (100 XP)
+        Level 3: Scavenger (300 XP)
+        Level 4: Tracker (700 XP)
+        Level 5: Treasure Hunter (1,500 XP)
+        Level 6: Trailblazer (3,000 XP)
+        Level 7: Expert Pathfinder (6,000 XP)
+        Level 8: Master Explorer (12,000 XP)
+        Level 9: Relic Hunter (25,000 XP)
+        Level 10: Legend of the Map (50,000 XP)
+        Option 2: The "Secret Courier" Theme (Best if the focus is on Messages)
+        Since the app is branded as "Postbox" and involves dropping hidden messages, this plays into the idea of a secret network of messengers.
+
+        Level 1: Whispering Ghost (0 XP)
+        Level 2: Shadow Courier (100 XP)
+        Level 3: Street Informant (300 XP)
+        Level 4: Message Runner (700 XP)
+        Level 5: Neighborhood Oracle (1,500 XP)
+        Level 6: Secret Keeper (3,000 XP)
+        Level 7: Master Dispatcher (6,000 XP)
+        Level 8: The Invisible Postman (12,000 XP)
+        Level 9: Cryptic Mastermind (25,000 XP)
+        Level 10: Omni-Courier (50,000 XP)
+        Option 3: The "TapTag Player" Theme (Modern, Social, & Gamified)
+        If you want something casual and socially driven that fits the "TapTag" branding.
+
+        Level 1: Tapper (0 XP)
+        Level 2: Tag Rookie (100 XP)
+        Level 3: Street Tagger (300 XP)
+        Level 4: City Nomad (700 XP)
+        Level 5: Radar Specialist (1,500 XP)
+        Level 6: Geo-Hacker (3,000 XP)
+        Level 7: Map VIP (6,000 XP)
+        Level 8: Tagging Elite (12,000 XP)
+        Level 9: Local Celebrity (25,000 XP)
+        Level 10: The TapTag Icon (50,000 XP)
+13 - [x] Add 5xp for every message the user found. it is claimed when user click claim button in message.
+14 - List user created tags and found tags/chest.
