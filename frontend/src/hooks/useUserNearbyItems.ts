@@ -25,7 +25,7 @@ export function useUserNearbyItems() {
         lng: userLocation.longitude,
         userId,
       });
-
+ // todo - check this items are already sorted by distance, if not sort them
       setNearbyMessages(messages);
       setNearbyChests(chests);
       setNearbyLootItems(lootItems);

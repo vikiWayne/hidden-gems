@@ -18,10 +18,20 @@ function locKey(lat: number, lng: number) {
 function isInBounds(
   lat: number,
   lng: number,
-  bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number } | null
+  bounds: {
+    minLat: number;
+    maxLat: number;
+    minLng: number;
+    maxLng: number;
+  } | null,
 ): boolean {
   if (!bounds) return true;
-  return lat >= bounds.minLat && lat <= bounds.maxLat && lng >= bounds.minLng && lng <= bounds.maxLng;
+  return (
+    lat >= bounds.minLat &&
+    lat <= bounds.maxLat &&
+    lng >= bounds.minLng &&
+    lng <= bounds.maxLng
+  );
 }
 
 /** Merge and dedupe: prefer nearby (has distance from user) when id exists in both */
@@ -56,23 +66,23 @@ export function MapView() {
   const mergedMessages = useMemo(
     () =>
       mergeById(nearbyMessages, viewportMessages).filter((m) =>
-        isInBounds(m.location.latitude, m.location.longitude, viewportBounds)
+        isInBounds(m.location.latitude, m.location.longitude, viewportBounds),
       ),
-    [nearbyMessages, viewportMessages, viewportBounds]
+    [nearbyMessages, viewportMessages, viewportBounds],
   );
   const mergedChests = useMemo(
     () =>
       mergeById(nearbyChests, viewportChests).filter((c) =>
-        isInBounds(c.location.latitude, c.location.longitude, viewportBounds)
+        isInBounds(c.location.latitude, c.location.longitude, viewportBounds),
       ),
-    [nearbyChests, viewportChests, viewportBounds]
+    [nearbyChests, viewportChests, viewportBounds],
   );
   const mergedLootItems = useMemo(
     () =>
       mergeById(nearbyLootItems, viewportLootItems).filter((l) =>
-        isInBounds(l.location.latitude, l.location.longitude, viewportBounds)
+        isInBounds(l.location.latitude, l.location.longitude, viewportBounds),
       ),
-    [nearbyLootItems, viewportLootItems, viewportBounds]
+    [nearbyLootItems, viewportLootItems, viewportBounds],
   );
 
   const handleStackItemSelect = useCallback(
@@ -93,7 +103,12 @@ export function MapView() {
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const handleViewportChange = useCallback(
-    (bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number }) => {
+    (bounds: {
+      minLat: number;
+      maxLat: number;
+      minLng: number;
+      maxLng: number;
+    }) => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
         setViewportBounds(bounds);
@@ -107,10 +122,12 @@ export function MapView() {
     () => () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     },
-    []
+    [],
   );
   const resolvedTheme = useResolvedTheme();
-  const currentTheme: ThemeKey = chestHunterMode ? "chest-hunter" : resolvedTheme;
+  const currentTheme: ThemeKey = chestHunterMode
+    ? "chest-hunter"
+    : resolvedTheme;
   const themeColors = useMemo(
     () => getThemeColors(currentTheme),
     [currentTheme],
@@ -120,10 +137,10 @@ export function MapView() {
     () => ({
       center: userLocation
         ? {
-          lat: userLocation.latitude,
-          lng: userLocation.longitude,
-          alt: userLocation.altitude,
-        }
+            lat: userLocation.latitude,
+            lng: userLocation.longitude,
+            alt: userLocation.altitude,
+          }
         : { lat: 8.5241, lng: 76.9366 },
       zoom: 17,
       darkMode: resolvedTheme === "dark" && !chestHunterMode,
@@ -134,15 +151,21 @@ export function MapView() {
         marker: themeColors.marker as Record<string, string>,
       },
     }),
-    [userLocation, resolvedTheme, chestHunterMode, flyToMarkerPosition, themeColors],
+    [
+      userLocation,
+      resolvedTheme,
+      chestHunterMode,
+      flyToMarkerPosition,
+      themeColors,
+    ],
   );
 
   const userPosition = userLocation
     ? {
-      lat: userLocation.latitude,
-      lng: userLocation.longitude,
-      alt: userLocation.altitude,
-    }
+        lat: userLocation.latitude,
+        lng: userLocation.longitude,
+        alt: userLocation.altitude,
+      }
     : null;
 
   const markers: MapMarkerConfig[] = useMemo(() => {
@@ -176,8 +199,7 @@ export function MapView() {
         proximityState === "near" && selectedMessage?.id === msg.id;
       const opened = isMessageOpened(msg.id) || isUnlocked;
       const isHidden = (isPrivate && !opened) || isBeyondLocked;
-      const isSelected =
-        selectedMessage?.id === msg.id && !opened;
+      const isSelected = selectedMessage?.id === msg.id && !opened;
 
       let icon: MapMarkerConfig["icon"] = "envelope-unopened";
       if (isHidden) {
@@ -195,8 +217,9 @@ export function MapView() {
           : isNear
             ? "orange"
             : "purple";
-      const color: MapMarkerConfig["color"] =
-        isHidden ? "grey" : (userColor ?? (isOwn ? "teal" : baseColor));
+      const color: MapMarkerConfig["color"] = isHidden
+        ? "grey"
+        : (userColor ?? (isOwn ? "teal" : baseColor));
 
       add({
         id: msg.id,
@@ -216,7 +239,7 @@ export function MapView() {
               : isBeyondLocked
                 ? "Reach nearby to unlock"
                 : msg.content.slice(0, 50) +
-                (msg.content.length > 50 ? "..." : ""),
+                  (msg.content.length > 50 ? "..." : ""),
           distance: msg.distance,
         },
       });
@@ -238,15 +261,14 @@ export function MapView() {
         lng: chest.location.longitude,
         alt: chest.location.altitude,
         icon,
-        color: isBeyondLocked ? "grey" : (isOwn ? "teal" : "gold"),
+        color: isBeyondLocked ? "grey" : isOwn ? "teal" : "gold",
         isSelected: selectedChestId === chest.id,
         popupItem: {
           id: chest.id,
           type: "chest",
-          itemName: chest.variant === "snake" ? "Snake Chest" : "Treasure Chest",
-          title: isBeyondLocked
-            ? "Reach nearby to unlock"
-            : chest.content,
+          itemName:
+            chest.variant === "snake" ? "Snake Chest" : "Treasure Chest",
+          title: isBeyondLocked ? "Reach nearby to unlock" : chest.content,
           distance: chest.distance,
         },
       });
@@ -263,15 +285,15 @@ export function MapView() {
         lng: loot.location.longitude,
         alt: loot.location.altitude,
         icon,
-        color: isBeyondLocked ? "grey" : (loot.isOwn ? "teal" : iconConfig.color),
+        color: isBeyondLocked ? "grey" : loot.isOwn ? "teal" : iconConfig.color,
         isSelected: false,
         popupItem: {
           id: loot.id,
           type: "loot",
-          itemName: loot.type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-          title: isBeyondLocked
-            ? "Reach nearby to unlock"
-            : loot.content,
+          itemName: loot.type
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase()),
+          title: isBeyondLocked ? "Reach nearby to unlock" : loot.content,
           distance: loot.distance,
         },
       });
@@ -295,15 +317,33 @@ export function MapView() {
           },
         });
       } else {
-        const selectedMsgInStack = selectedMessage && items.some((i) => i.popupItem.id === selectedMessage.id && i.popupItem.type === "message");
-        const selectedChestInStack = selectedChestId && items.some((i) => i.popupItem.id === selectedChestId && i.popupItem.type === "chest");
-        const selectedInStack = Boolean(selectedMsgInStack || selectedChestInStack);
+        const selectedMsgInStack =
+          selectedMessage &&
+          items.some(
+            (i) =>
+              i.popupItem.id === selectedMessage.id &&
+              i.popupItem.type === "message",
+          );
+        const selectedChestInStack =
+          selectedChestId &&
+          items.some(
+            (i) =>
+              i.popupItem.id === selectedChestId &&
+              i.popupItem.type === "chest",
+          );
+        const selectedInStack = Boolean(
+          selectedMsgInStack || selectedChestInStack,
+        );
         const firstSelected = selectedInStack
           ? items.find(
-            (i) =>
-              (selectedMessage && i.popupItem.id === selectedMessage.id && i.popupItem.type === "message") ||
-              (selectedChestId && i.popupItem.id === selectedChestId && i.popupItem.type === "chest"),
-          )
+              (i) =>
+                (selectedMessage &&
+                  i.popupItem.id === selectedMessage.id &&
+                  i.popupItem.type === "message") ||
+                (selectedChestId &&
+                  i.popupItem.id === selectedChestId &&
+                  i.popupItem.type === "chest"),
+            )
           : null;
         const shouldHighlight = Boolean(
           selectedInStack &&
@@ -311,18 +351,26 @@ export function MapView() {
           !(
             firstSelected.popupItem.type === "message" &&
             isMessageOpened(firstSelected.popupItem.id)
-          )
+          ),
         );
         let stackColor: MapMarkerConfig["color"] = "purple";
         if (selectedInStack && firstSelected) {
           const popupType = firstSelected.popupItem.type;
-          const isMsg = popupType === "message" ? mergedMessages.find((m) => m.id === firstSelected.popupItem.id) : null;
+          const isMsg =
+            popupType === "message"
+              ? mergedMessages.find((m) => m.id === firstSelected.popupItem.id)
+              : null;
           const isChestItem = popupType === "chest";
           const isLootItem = popupType === "loot";
-          const lootItem = isLootItem ? mergedLootItems.find((l) => l.id === firstSelected.popupItem.id) : null;
+          const lootItem = isLootItem
+            ? mergedLootItems.find((l) => l.id === firstSelected.popupItem.id)
+            : null;
           if (isMsg?.isOwn) stackColor = "teal";
           else if (isChestItem) stackColor = "gold";
-          else if (isLootItem && lootItem) stackColor = lootItem.isOwn ? "teal" : (LOOT_ITEM_ICONS[lootItem.type]?.color ?? "purple");
+          else if (isLootItem && lootItem)
+            stackColor = lootItem.isOwn
+              ? "teal"
+              : (LOOT_ITEM_ICONS[lootItem.type]?.color ?? "purple");
           else if (
             proximityState === "unlocked" &&
             selectedMessage?.id === firstSelected.id

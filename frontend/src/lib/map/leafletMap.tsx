@@ -10,6 +10,8 @@ import "leaflet/dist/leaflet.css";
 import type { MapLocation, MapMarkerConfig, MapConfig } from "./types";
 import { getThemeColors } from "@/config/theme";
 
+const MAP_ZOOM = { MAX: 18, MIN: 5 }
+
 delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })
   ._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -226,9 +228,9 @@ function MapFlyTo({
     lastPosRef.current = position;
     const durationMs = 800;
     // Zoom in slightly (18) when flying to a marker so the location is clearly visible
-    const targetZoom = Math.max(map.getZoom(), 18);
+    const targetZoom = Math.max(map.getZoom(), MAP_ZOOM.MAX);
     map.flyTo([position.lat, position.lng], targetZoom, {
-      duration: 0, // in seconds
+      duration: 1, // in seconds
       animate: true,
     });
 
@@ -298,8 +300,8 @@ function LocateMeButton({
   if (!userPosition) return null;
 
   const handleClick = () => {
-    map.flyTo([userPosition.lat, userPosition.lng], map.getZoom(), {
-      duration: 0,
+    map.flyTo([userPosition.lat, userPosition.lng], MAP_ZOOM.MAX, {
+      duration: 1,
       animate: true,
     });
   };
@@ -423,6 +425,8 @@ export function LeafletMap({
         zoomControl={false}
         dragging
         scrollWheelZoom
+        minZoom={MAP_ZOOM.MIN}
+        maxZoom={MAP_ZOOM.MAX}
       >
         <TileLayer
           attribution={

@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from "react";
 import { useAppStore } from "@/store/useAppStore";
 
 const UNLOCK_DISTANCE_M = 100;
-const NEAR_DISTANCE_M = 100;
+const NEAR_DISTANCE_M = 200;
 const LOCKED_DISTANCE_M = 500;
 const POLL_INTERVAL_MS = 10000;
 
