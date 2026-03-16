@@ -1,0 +1,1680 @@
+/* Frame 772542962 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 12px 12px 23px;
+gap: 14px;
+
+position: absolute;
+width: 262px;
+height: 966px;
+left: 0px;
+top: 58px;
+
+background: #ffffff;
+border-right: 1px solid #e6e6e6;
+
+/* Frame 1410117589 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px;
+gap: 10px;
+
+width: 238px;
+height: 50px;
+
+background: #f1f8f6;
+border-radius: 10px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+/* Frame 1410117520 */
+
+width: 24px;
+height: 24px;
+
+background: #f9f9f9;
+border-radius: 33px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* image 35 */
+
+position: absolute;
+width: 29px;
+height: 45px;
+left: -2px;
+top: -5px;
+
+background: url(image);
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+/* Frame 1410117594 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 0px;
+
+width: 162px;
+height: 34px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+/* Alex John */
+
+width: 162px;
+height: 20px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 20px;
+/* identical to box height, or 143% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+/* Project Manager */
+
+width: 162px;
+height: 14px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 14px;
+/* identical to box height, or 127% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #707070;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+/* chevron-down
+
+chevron, down, dropdown
+*/
+
+width: 16px;
+height: 16px;
+
+transform: rotate(-90deg);
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 37.5%;
+right: 12.5%;
+top: 25%;
+bottom: 50%;
+
+border: 1.33333px solid #2a3c4c;
+transform: rotate(-90deg);
+
+/* Frame 1410117597 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px 10px;
+gap: 8px;
+
+width: 158px;
+height: 18px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+/* My Career Assistant */
+
+width: 138px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 18px;
+/* identical to box height, or 150% */
+display: flex;
+align-items: center;
+text-transform: uppercase;
+
+color: #787878;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Frame 1410117593 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 8px 8px 10px;
+gap: 12px;
+
+width: 238px;
+height: 36px;
+
+background: #e0f0eb;
+border-radius: 8px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+/* grid-01
+
+grid, align, flex, distribute, layout, move, square
+*/
+
+width: 20px;
+height: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+border: 1.5px solid #000000;
+border-radius: 0.833333px;
+
+/* Dashboard */
+
+width: 70px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* identical to box height, or 129% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+/* Frame 1410117598 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px 10px;
+gap: 8px;
+
+width: 176px;
+height: 18px;
+
+border-radius: 0px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+/* My Ai Career Assistant */
+
+width: 156px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 18px;
+/* identical to box height, or 150% */
+display: flex;
+align-items: center;
+text-transform: uppercase;
+
+color: #787878;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 1;
+
+/* Frame 772542946 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+
+width: 238px;
+height: 224px;
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+align-self: stretch;
+flex-grow: 0;
+
+/* Link */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 10px;
+gap: 12px;
+
+width: 238px;
+height: 36px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+/* mark
+
+mark, marker, pin, map
+*/
+
+width: 20px;
+height: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.34%;
+bottom: 8.33%;
+
+border: 1.66667px solid #3e3e3e;
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 76px;
+height: 18px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+/* Goal Center */
+
+width: 76px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* identical to box height, or 129% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Link */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 10px;
+gap: 12px;
+
+width: 238px;
+height: 36px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+/* compass-03
+
+compass, direction, map
+*/
+
+width: 20px;
+height: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.34%;
+bottom: 8.33%;
+
+border: 1.66667px solid #3e3e3e;
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 108px;
+height: 18px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+/* Guidance Center */
+
+width: 108px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* identical to box height, or 129% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Link */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 10px;
+gap: 12px;
+
+width: 238px;
+height: 36px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+/* container
+
+container, box, cube, code, markdown, css, div
+*/
+
+width: 20px;
+height: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 8.93%;
+bottom: 8.94%;
+
+border: 1.66667px solid #3e3e3e;
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 102px;
+height: 18px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+/* Connect Center */
+
+width: 102px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* identical to box height, or 129% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Link */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 10px;
+gap: 12px;
+
+width: 238px;
+height: 36px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+/* briefcase-02
+
+briefcase, bag, travel
+*/
+
+width: 20px;
+height: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 12.5%;
+bottom: 12.5%;
+
+border: 1.66667px solid #3e3e3e;
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 158px;
+height: 18px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+/* Work & Earn */
+
+width: 78px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* identical to box height, or 129% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* chevron-down
+
+chevron, down, dropdown
+*/
+
+width: 16px;
+height: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 25%;
+right: 25%;
+top: 37.5%;
+bottom: 37.5%;
+
+border: 1.33333px solid #2a3c4c;
+
+/* Link */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 10px;
+gap: 12px;
+
+width: 238px;
+height: 36px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+align-self: stretch;
+flex-grow: 0;
+
+/* graduation-hat-01
+
+graduation hat, graduation, university, education, tertiary education
+*/
+
+width: 20px;
+height: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 14.82%;
+bottom: 15.08%;
+
+border: 1.66667px solid #3e3e3e;
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 158px;
+height: 18px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+/* Learning Center */
+
+width: 103px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* identical to box height, or 129% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* chevron-down
+
+chevron, down, dropdown
+*/
+
+width: 16px;
+height: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 25%;
+right: 25%;
+top: 37.5%;
+bottom: 37.5%;
+
+border: 1.33333px solid #2a3c4c;
+
+/* Frame 1410117599 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px 10px;
+gap: 8px;
+
+width: 102px;
+height: 18px;
+
+border-radius: 0px;
+
+/* Inside auto layout */
+flex: none;
+order: 5;
+align-self: stretch;
+flex-grow: 0;
+
+/* My Account */
+
+width: 82px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 18px;
+/* identical to box height, or 150% */
+display: flex;
+align-items: center;
+text-transform: uppercase;
+
+color: #787878;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 1;
+
+/* Frame 1410117594 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+
+width: 238px;
+height: 226px;
+
+/* Inside auto layout */
+flex: none;
+order: 6;
+align-self: stretch;
+flex-grow: 0;
+
+/* Link */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 10px;
+gap: 12px;
+
+width: 238px;
+height: 36px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+/* star-02
+
+star, favorite, favourite, save, galaxy
+*/
+
+width: 20px;
+height: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 15.46%;
+right: 15.46%;
+top: 10.43%;
+bottom: 10.43%;
+
+border: 1.66667px solid #3e3e3e;
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 158px;
+height: 18px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+/* Feature Center */
+
+width: 96px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* identical to box height, or 129% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* chevron-down
+
+chevron, down, dropdown
+*/
+
+width: 16px;
+height: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 25%;
+right: 25%;
+top: 37.5%;
+bottom: 37.5%;
+
+border: 1.33333px solid #2a3c4c;
+
+/* Link */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 10px;
+gap: 12px;
+
+width: 238px;
+height: 36px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+/* folder
+
+folder, file, project, attachment
+*/
+
+width: 20px;
+height: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 12.5%;
+bottom: 12.5%;
+
+border: 1.66667px solid #3e3e3e;
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 113px;
+height: 18px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+/* Document Center */
+
+width: 113px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* identical to box height, or 129% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Link */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 10px;
+gap: 12px;
+
+width: 238px;
+height: 36px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+/* credit-card-shield
+
+credit card, shield, cybersecurity, debit card, card, currency, money
+*/
+
+width: 20px;
+height: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 20.84%;
+bottom: 12.49%;
+
+border: 1.66667px solid #3e3e3e;
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 64px;
+height: 18px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+/* Payments */
+
+width: 64px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* identical to box height, or 129% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Link */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 10px;
+gap: 12px;
+
+width: 238px;
+height: 36px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+/* graduation-hat-01
+
+graduation hat, graduation, university, education, tertiary education
+*/
+
+width: 20px;
+height: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Icon */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 14.82%;
+bottom: 15.08%;
+
+border: 1.66667px solid #3e3e3e;
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 103px;
+height: 18px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+/* Learning Center */
+
+width: 103px;
+height: 18px;
+
+font-family: "Inter";
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* identical to box height, or 129% */
+display: flex;
+align-items: center;
+letter-spacing: -0.02em;
+
+color: #000000;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Frame 1410117596 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 10px;
+gap: 24px;
+
+width: 238px;
+height: 149.92px;
+
+background: linear-gradient(360deg, #f1f8f6 56.86%, #ffffff 100%);
+border-radius: 10px;
+
+/* Inside auto layout */
+flex: none;
+order: 7;
+align-self: stretch;
+flex-grow: 0;
+
+/* app-download-buttons 1 */
+
+width: 218px;
+height: 41.92px;
+
+background: url(bg_removal [Background removed].png);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+/* Frame 2018777327 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 16px;
+
+width: 218px;
+height: 64px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 0.03px 0px 0px;
+gap: 12px;
+
+width: 218px;
+height: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+/* prime:twitter */
+
+width: 24px;
+height: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+/* Group */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 8.33%;
+
+/* Clip path group */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 8.33%;
+
+/* SVGG1Ot4cAD */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 8.33%;
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 8.33%;
+
+background: #000000;
+
+/* Group */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 12.24%;
+bottom: 12.24%;
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 12.24%;
+bottom: 12.24%;
+
+background: #000000;
+
+/* ic:round-facebook */
+
+width: 24px;
+height: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 8.54%;
+
+background: #000000;
+
+/* mingcute:youtube-fill */
+
+width: 24px;
+height: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+/* Group */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 16.67%;
+bottom: 0.77%;
+
+/* Vector */
+
+position: absolute;
+left: 50.32%;
+right: 46.2%;
+top: 96.44%;
+bottom: 0.77%;
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 16.67%;
+bottom: 16.67%;
+
+background: #000000;
+
+/* mingcute:instagram-line */
+
+width: 24px;
+height: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+/* Group */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 0.77%;
+
+/* Vector */
+
+position: absolute;
+left: 50.32%;
+right: 46.2%;
+top: 96.44%;
+bottom: 0.77%;
+
+/* Vector */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+background: #000000;
+
+/* Pepelwerk Logo */
+
+width: 105.27px;
+height: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+/* Group 18 */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+/* Clip path group */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+/* clip-path-8 */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+/* Rectangle 16 */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #000000;
+
+/* Group 17 */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 12.6%;
+bottom: 0.01%;
+
+/* Path 5 */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 12.6%;
+bottom: 0.01%;
+
+background: #00a3a3;
+
+/* Path 6763 */
+
+position: absolute;
+left: 70.59%;
+right: 18.97%;
+top: 30.71%;
+bottom: 17.48%;
+
+background: #00a3a3;
+
+/* Group 20 */
+
+position: absolute;
+left: 12.56%;
+right: 78.13%;
+top: 12.6%;
+bottom: 80.3%;
+
+/* Clip path group */
+
+position: absolute;
+left: 12.56%;
+right: 78.13%;
+top: 12.6%;
+bottom: 80.3%;
+
+/* clip-path-9 */
+
+position: absolute;
+left: 12.56%;
+right: 78.13%;
+top: 12.6%;
+bottom: 80.3%;
+
+/* Path 7 */
+
+position: absolute;
+left: 12.56%;
+right: 78.13%;
+top: 12.6%;
+bottom: 80.3%;
+
+background: #000000;
+
+/* Group 19 */
+
+position: absolute;
+left: 7.91%;
+right: 73.48%;
+top: 9.05%;
+bottom: 76.75%;
+
+/* Path 6 */
+
+position: absolute;
+left: 7.91%;
+right: 73.48%;
+top: 9.05%;
+bottom: 76.75%;
+
+background: linear-gradient(90deg, #00cccc -42.5%, #19ce99 -42%);
+
+/* Group 28 */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+/* Clip path group */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+/* clip-path-8 */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+/* Rectangle 16 */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #17212a;
+
+/* Group 27 */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+/* Group 26 */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+/* Group 25 */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+/* Clip path group */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+/* clip-path-11 */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+/* Rectangle 18 */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+background: #000000;
+
+/* Group 24 */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+/* Group 23 */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+/* Group 22 */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+/* Clip path group */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+/* clip-path-11 */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+/* Rectangle 18 */
+
+position: absolute;
+left: 96.42%;
+right: 0.07%;
+top: 0%;
+bottom: 86.84%;
+
+background: #000000;
+
+/* Group 21 */
+
+position: absolute;
+left: 96.47%;
+right: 0.35%;
+top: 0.7%;
+bottom: 91.92%;
+
+/* TM */
+
+position: absolute;
+left: 96.47%;
+right: 0.35%;
+top: 0.7%;
+bottom: 91.92%;
+
+background: #00a3a3;
