@@ -26,14 +26,36 @@ mapRouter.get('/nearby', (req, res) => {
     return res.status(400).json({ message: 'lat, lng required as numbers' })
   }
 
-  const messages = getNearbyMessages(lat, lng, undefined, userId)
-  let chests = getNearbyChests(lat, lng, userId)
-  let lootItems = getLootItemsNearby(lat, lng, userId)
+  const filter = req.query.filter as string | undefined
+  const fetchMessages = !filter || filter === 'all' || filter === 'messages'
+  const fetchChests = !filter || filter === 'all' || filter === 'chests'
+  const fetchLoot = !filter || filter === 'all' || filter === 'loot'
+
+  let messages: any[] = []
+  let chests: any[] = []
+  let lootItems: any[] = []
+
+  let claimedMessageIds: string[] = []
+  let claimedChestIds: string[] = []
+  let claimedLootIds: string[] = []
 
   if (userId) {
-    const { chestIds, lootIds } = getClaimedIds(userId)
-    chests = chests.filter((c) => !chestIds.includes(c.id))
-    lootItems = lootItems.filter((l) => !lootIds.includes(l.id))
+    const { messageIds, chestIds, lootIds } = getClaimedIds(userId)
+    claimedMessageIds = messageIds
+    claimedChestIds = chestIds
+    claimedLootIds = lootIds
+  }
+
+  if (fetchMessages) {
+    messages = getNearbyMessages(lat, lng, claimedMessageIds, userId)
+  }
+  if (fetchChests) {
+    chests = getNearbyChests(lat, lng, userId)
+    chests = chests.filter((c) => !claimedChestIds.includes(c.id))
+  }
+  if (fetchLoot) {
+    lootItems = getLootItemsNearby(lat, lng, userId)
+    lootItems = lootItems.filter((l) => !claimedLootIds.includes(l.id))
   }
 
   res.json({ messages, chests, lootItems })
@@ -73,22 +95,36 @@ mapRouter.get('/viewport', (req, res) => {
     })
   }
 
-  const messages = getMessagesInViewport(minLat, maxLat, minLng, maxLng, userId, userLat, userLng)
-  let chests = getChestsInViewport(minLat, maxLat, minLng, maxLng, userId, userLat, userLng)
-  let lootItems = getLootItemsInViewport(
-    minLat,
-    maxLat,
-    minLng,
-    maxLng,
-    userId,
-    userLat,
-    userLng
-  )
+  const filter = req.query.filter as string | undefined
+  const fetchMessages = !filter || filter === 'all' || filter === 'messages'
+  const fetchChests = !filter || filter === 'all' || filter === 'chests'
+  const fetchLoot = !filter || filter === 'all' || filter === 'loot'
+
+  let messages: any[] = []
+  let chests: any[] = []
+  let lootItems: any[] = []
+
+  let claimedMessageIds: string[] = []
+  let claimedChestIds: string[] = []
+  let claimedLootIds: string[] = []
 
   if (userId) {
-    const { chestIds, lootIds } = getClaimedIds(userId)
-    chests = chests.filter((c) => !chestIds.includes(c.id))
-    lootItems = lootItems.filter((l) => !lootIds.includes(l.id))
+    const { messageIds, chestIds, lootIds } = getClaimedIds(userId)
+    claimedMessageIds = messageIds
+    claimedChestIds = chestIds
+    claimedLootIds = lootIds
+  }
+
+  if (fetchMessages) {
+    messages = getMessagesInViewport(minLat, maxLat, minLng, maxLng, userId, userLat, userLng, claimedMessageIds)
+  }
+  if (fetchChests) {
+    chests = getChestsInViewport(minLat, maxLat, minLng, maxLng, userId, userLat, userLng)
+    chests = chests.filter((c) => !claimedChestIds.includes(c.id))
+  }
+  if (fetchLoot) {
+    lootItems = getLootItemsInViewport(minLat, maxLat, minLng, maxLng, userId, userLat, userLng)
+    lootItems = lootItems.filter((l) => !claimedLootIds.includes(l.id))
   }
 
   res.json({

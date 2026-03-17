@@ -31,6 +31,7 @@ import type {
   CreatedChestItem,
   FoundChestItem,
   FoundLootItem,
+  FoundMessageItem,
 } from "@/api/types/responses";
 import type { MarkerColor } from "@/types";
 
@@ -82,7 +83,8 @@ type CollectionItem =
   | { kind: "created-message"; data: CreatedMessageItem }
   | { kind: "created-chest"; data: CreatedChestItem }
   | { kind: "found-chest"; data: FoundChestItem }
-  | { kind: "found-loot"; data: FoundLootItem };
+  | { kind: "found-loot"; data: FoundLootItem }
+  | { kind: "found-message"; data: FoundMessageItem };
 
 function getItemLabel(item: CollectionItem): string {
   switch (item.kind) {
@@ -94,12 +96,15 @@ function getItemLabel(item: CollectionItem): string {
       return "Chest found";
     case "found-loot":
       return `Loot: ${item.data.type}`;
+    case "found-message":
+      return "Message found";
   }
 }
 
 function getItemPreview(item: CollectionItem): string {
   switch (item.kind) {
     case "created-message":
+    case "found-message":
       return item.data.content.slice(0, 60) + (item.data.content.length > 60 ? "…" : "");
     case "created-chest":
     case "found-chest":
@@ -112,6 +117,7 @@ function getItemPreview(item: CollectionItem): string {
 function getItemLocation(item: CollectionItem): { latitude: number; longitude: number } | null {
   switch (item.kind) {
     case "created-message":
+    case "found-message":
       return { latitude: item.data.latitude, longitude: item.data.longitude };
     case "created-chest":
       return { latitude: item.data.latitude, longitude: item.data.longitude };
@@ -173,16 +179,18 @@ function ItemDetailModal({
                 ? item.data.content
                 : item.kind === "created-chest"
                   ? item.data.content
-                  : item.data.content}
+                  : item.kind === "found-message"
+                    ? item.data.content
+                    : item.data.content}
             </p>
           </div>
-          {(item.kind === "found-chest" || item.kind === "found-loot") && (
+          {(item.kind === "found-chest" || item.kind === "found-loot" || item.kind === "found-message") && (
             <p className="text-[var(--color-text-muted)] text-sm font-bold">
               Found {new Date(item.data.foundAt).toLocaleString(undefined, {
                 dateStyle: "medium",
                 timeStyle: "short",
               })}
-              {item.data.finderOrdinal > 1 && (
+              {"finderOrdinal" in item.data && item.data.finderOrdinal > 1 && (
                 <span className="ml-1">(#{item.data.finderOrdinal} to find)</span>
               )}
             </p>
@@ -592,6 +600,7 @@ export function MyCollectionPage() {
     data.createdChests.forEach((c) => items.push({ kind: "created-chest", data: c }));
     data.foundChests.forEach((f) => items.push({ kind: "found-chest", data: f }));
     data.foundLoot.forEach((f) => items.push({ kind: "found-loot", data: f }));
+    data.foundMessages?.forEach((m) => items.push({ kind: "found-message", data: m }));
   }
 
   const getItemId = (item: CollectionItem) =>

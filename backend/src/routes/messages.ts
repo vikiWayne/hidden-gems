@@ -58,6 +58,12 @@ messagesRouter.get('/:id', (req, res) => {
     return res.status(404).json({ message: 'Message not found' })
   }
 
+  if (userId && result.unlocked) {
+    import('../db/repositories/discoveries.repository.js').then(m => {
+      m.recordMessageDiscovery(userId, req.params.id)
+    }).catch()
+  }
+
   res.json(result)
 })
 

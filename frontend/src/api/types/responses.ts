@@ -148,9 +148,20 @@ export interface FoundLootItem {
   foundAt: string;
 }
 
+export interface FoundMessageItem {
+  id: string;
+  itemId: string;
+  type: string;
+  content: string;
+  foundAt: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface GetMyItemsResponse {
   createdMessages: CreatedMessageItem[];
   createdChests: CreatedChestItem[];
   foundChests: FoundChestItem[];
   foundLoot: FoundLootItem[];
+  foundMessages: FoundMessageItem[];
 }

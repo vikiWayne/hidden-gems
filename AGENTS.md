@@ -21,7 +21,8 @@ This document provides structured documentation for AI agents working on the Pos
 | **Message** | Geo-tagged content (text, voice, image, video). Can be public or private. |
 | **Chest** | Geo-tagged treasure with XP reward. Unlocks at 20 m. |
 | **Tag** | User-created message; shown in "My Tags" |
-| **Proximity** | Distance-based states: `far` (>80 m), `near` (20–80 m), `unlocked` (≤20 m) |
+| **Proximity** | Distance-based states: `far` (>80 m), `near` (20–80 m), `unlocked` (≤20 m). Claimed items are excluded from proximity checks. |
+| **Claimed Item** | Items already unlocked/opened are highlighted in `grey` on the map across different item types, and added to the user's "My Collection" tab. |
 | **Chest Hunter** | Mode when a chest is within 200 m; gold-themed UI |
 | **Stack** | Multiple messages/chests at the same location; shown as one marker with expandable list |
 | **Loot Item** | Explorable items mapped dynamically such as avatar, diamond, cash_chest, loot_box, surprise, powerup, bomb, snake |
@@ -312,6 +313,7 @@ App
 - `purple` — Far
 - `orange` — Near
 - `green` — Unlocked
+- `grey` — Already Unlocked / Claimed items (keeps same icon)
 - `gold` — Chest
 - `teal` — Own content (messages/chests)
 

@@ -225,7 +225,7 @@ export function ProximityCard() {
                     <p className="font-bold text-sm text-[var(--color-text-primary)] leading-tight">
                       {isChest
                         ? "Reach nearby to unlock"
-                        : "Reach nearby to unlock"}
+                        : "[Hidden - walk closer to reveal]"}
                     </p>
                     <p className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mt-1">
                       Tap to locate

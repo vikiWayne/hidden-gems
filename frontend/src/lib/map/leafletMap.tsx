@@ -3,14 +3,21 @@
  * Swap this file to change map provider.
  */
 import { useMemo, useEffect, useRef, useCallback } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
 import type { MapMarkerPopupItem, MapMarkerItemType } from "./types";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { MapLocation, MapMarkerConfig, MapConfig } from "./types";
 import { getThemeColors } from "@/config/theme";
 
-const MAP_ZOOM = { MAX: 18, MIN: 5 }
+const MAP_ZOOM = { MAX: 18, MIN: 5 };
 
 delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })
   ._getIconUrl;
@@ -26,9 +33,7 @@ L.Icon.Default.mergeOptions({
 function getMarkerColors(config: MapConfig): Record<string, string> {
   return (
     config.themeColors?.marker ?? {
-      ...Object.fromEntries(
-        Object.entries(getThemeColors("light").marker),
-      ),
+      ...Object.fromEntries(Object.entries(getThemeColors("light").marker)),
     }
   );
 }
@@ -53,8 +58,7 @@ function createGameIcon(
     // Chest - treasure box
     chest:
       '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9h18v12H3z"/><path d="M3 9l2.5-5h13L21 9"/><path d="M12 9v12"/></svg>',
-    bomb:
-      '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9h18v12H3z"/><path d="M3 9l2.5-5h13L21 9"/><path d="M12 9v12"/></svg>',
+    bomb: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9h18v12H3z"/><path d="M3 9l2.5-5h13L21 9"/><path d="M12 9v12"/></svg>',
     snake:
       '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9h18v12H3z"/><path d="M3 9l2.5-5h13L21 9"/><path d="M12 9v12"/></svg>',
     // Chest opened
@@ -381,7 +385,9 @@ function StackPopupContent({
               </span>
             )}
           </div>
-          <div className="font-medium truncate text-white/90 mt-0.5">{item.title}</div>
+          <div className="font-medium truncate text-white/90 mt-0.5">
+            {item.title}
+          </div>
         </button>
       ))}
     </div>
@@ -427,6 +433,7 @@ export function LeafletMap({
         scrollWheelZoom
         minZoom={MAP_ZOOM.MIN}
         maxZoom={MAP_ZOOM.MAX}
+        preferCanvas
       >
         <TileLayer
           attribution={
@@ -459,7 +466,8 @@ export function LeafletMap({
           const isUser = m.icon === "user";
           const showPulse = !isUser && m.isSelected === true;
           const colorKey = m.color ?? "purple";
-          const colorHex = markerColors[colorKey] ?? markerColors.purple ?? "#ce82ff";
+          const colorHex =
+            markerColors[colorKey] ?? markerColors.purple ?? "#ce82ff";
           const icon = getIcon(
             m.icon,
             colorHex,
@@ -479,7 +487,7 @@ export function LeafletMap({
                 <Popup className="map-stack-popup">
                   <StackPopupContent
                     items={m.items}
-                    onSelect={onStackItemSelect ?? (() => { })}
+                    onSelect={onStackItemSelect ?? (() => {})}
                   />
                 </Popup>
               ) : m.popup ? (
@@ -493,7 +501,9 @@ export function LeafletMap({
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 text-sm text-white/90">{m.popup.title}</div>
+                    <div className="mt-1 text-sm text-white/90">
+                      {m.popup.title}
+                    </div>
                   </div>
                 </Popup>
               ) : null}

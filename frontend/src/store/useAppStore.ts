@@ -9,6 +9,8 @@ export type SelectedStackItem =
   | { type: 'loot'; data: NearbyLootItem }
   | null
 
+export type MapFilter = 'all' | 'messages' | 'chests' | 'loot'
+
 interface AppState {
   userLocation: Location | null
   nearbyMessages: NearbyMessage[]
@@ -22,6 +24,7 @@ interface AppState {
   claimedMessageIds: string[]
   flyToMarkerPosition: { lat: number; lng: number } | null
   claimAnimation: { xp: number; coins: number; fromRect: DOMRect; chestId?: string } | null
+  mapFilter: MapFilter
   setUserLocation: (loc: Location | null) => void
   setNearbyMessages: (msgs: NearbyMessage[]) => void
   setSelectedMessage: (msg: NearbyMessage | null) => void
@@ -37,6 +40,7 @@ interface AppState {
   isMessageOpened: (id: string) => boolean
   markMessageClaimed: (id: string) => void
   isMessageClaimed: (id: string) => boolean
+  setMapFilter: (filter: MapFilter) => void
 }
 
 export const useAppStore = create<AppState>()(
@@ -54,6 +58,7 @@ export const useAppStore = create<AppState>()(
       claimedMessageIds: [],
       flyToMarkerPosition: null,
       claimAnimation: null,
+      mapFilter: 'all',
       setUserLocation: (loc) => set({ userLocation: loc }),
       setNearbyMessages: (msgs) => set({ nearbyMessages: msgs }),
       setSelectedMessage: (msg) => set({ selectedMessage: msg, selectedChestId: null }),
@@ -76,8 +81,9 @@ export const useAppStore = create<AppState>()(
           claimedMessageIds: s.claimedMessageIds.includes(id) ? s.claimedMessageIds : [...s.claimedMessageIds, id],
         })),
       isMessageClaimed: (id) => get().claimedMessageIds.includes(id),
+      setMapFilter: (filter) => set({ mapFilter: filter }),
     }),
-    { name: 'taptag-opened', partialize: (s) => ({ openedMessageIds: s.openedMessageIds, claimedMessageIds: s.claimedMessageIds }) }
+    { name: 'taptag-opened', partialize: (s) => ({ openedMessageIds: s.openedMessageIds, claimedMessageIds: s.claimedMessageIds, mapFilter: s.mapFilter }) }
   )
 )
 

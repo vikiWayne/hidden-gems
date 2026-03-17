@@ -11,9 +11,11 @@ import { TagUnlockedCard } from "@/components/TagUnlockedCard";
 import { AnimatePresence, motion } from "framer-motion";
 import { LocationError, Spinner } from "@/components/ui";
 
+import type { MapFilter } from "@/store/useAppStore";
+
 export function ExplorePage() {
   const { userLocation } = useLocation();
-  const { proximityState, isLocationLoading, locationError } = useAppStore();
+  const { proximityState, isLocationLoading, locationError, mapFilter, setMapFilter } = useAppStore();
   const { chestHunterMode } = useGameStore();
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
@@ -33,6 +35,12 @@ export function ExplorePage() {
     }
   }, []);
 
+  const filters: { label: string; value: MapFilter }[] = [
+    { label: "All Items", value: "all" },
+    { label: "Tags", value: "messages" },
+    { label: "Chests", value: "chests" },
+    { label: "Loot", value: "loot" },
+  ];
 
   if (locationError) {
     return (
@@ -59,6 +67,26 @@ export function ExplorePage() {
         className="map-fullscreen-container relative z-0 isolate min-h-[50vh] lg:min-h-[70vh] rounded-3xl overflow-hidden border-4 border-[var(--color-border)] shadow-2xl order-1"
       >
         <MapView />
+
+        {/* Filter Chips */}
+        <div className="absolute top-2 left-2 z-[1000] flex flex-col gap-2">
+          <div className="text-[10px] font-black uppercase tracking-widest text-white/80 bg-black/40 px-2 py-1 rounded w-fit">
+            Filter
+          </div>
+          {filters.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setMapFilter(f.value)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-colors shadow-lg border-2 text-left ${
+                mapFilter === f.value
+                  ? "bg-[var(--color-game-purple)] text-white border-white/40"
+                  : "bg-[var(--color-bg-primary)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:bg-[var(--color-bg-secondary)]"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
 
         {/* Overlay pulse for nearest item if any */}
         {proximityState === "near" && (

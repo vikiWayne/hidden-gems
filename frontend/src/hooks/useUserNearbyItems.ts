@@ -10,7 +10,7 @@ import { UNLOCK_DISTANCE_M, NEAR_DISTANCE_M, POLL_INTERVAL_MS } from "./useLocat
  * and nearby list. UI stays stable when user pans the map - only user location changes update this.
  */
 export function useUserNearbyItems() {
-  const { userLocation, setNearbyMessages, setSelectedMessage, setProximityState } =
+  const { userLocation, setNearbyMessages, setSelectedMessage, setProximityState, mapFilter } =
     useAppStore();
   const { setNearbyChests, setNearbyLootItems } = useGameStore();
   const { userId } = useUserStore();
@@ -24,13 +24,21 @@ export function useUserNearbyItems() {
         lat: userLocation.latitude,
         lng: userLocation.longitude,
         userId,
+        filter: mapFilter,
       });
  // todo - check this items are already sorted by distance, if not sort them
       setNearbyMessages(messages);
       setNearbyChests(chests);
       setNearbyLootItems(lootItems);
 
-      const closest = messages[0];
+      const store = useAppStore.getState();
+
+      const unclaimedMessages = messages.filter(
+        (m) => !store.claimedMessageIds.includes(m.id) && !store.openedMessageIds.includes(m.id)
+      );
+
+      // find the overall closest across unclaimed messages
+      const closest = unclaimedMessages[0];
       if (!closest) {
         setSelectedMessage(null);
         setProximityState("far");
@@ -57,6 +65,7 @@ export function useUserNearbyItems() {
   }, [
     userLocation,
     userId,
+    mapFilter,
     setNearbyMessages,
     setNearbyChests,
     setNearbyLootItems,

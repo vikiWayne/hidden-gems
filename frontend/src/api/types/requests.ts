@@ -73,10 +73,12 @@ export interface GetMapViewportParams {
   userId?: string;
   userLat?: number;
   userLng?: number;
+  filter?: "all" | "messages" | "chests" | "loot";
 }
 
 export interface GetMapNearbyParams {
   lat: number;
   lng: number;
   userId?: string;
+  filter?: "all" | "messages" | "chests" | "loot";
 }

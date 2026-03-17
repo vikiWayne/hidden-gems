@@ -210,16 +210,18 @@ export function MapView() {
 
       const userColor = (msg as { markerColor?: MapMarkerConfig["color"] })
         .markerColor;
-      const baseColor: MapMarkerConfig["color"] = isHidden
-        ? "grey"
-        : isUnlocked
-          ? "green"
-          : isNear
-            ? "orange"
-            : "purple";
-      const color: MapMarkerConfig["color"] = isHidden
-        ? "grey"
-        : (userColor ?? (isOwn ? "teal" : baseColor));
+      const baseColor: MapMarkerConfig["color"] =
+        isHidden || opened
+          ? "grey"
+          : isUnlocked
+            ? "green"
+            : isNear
+              ? "orange"
+              : "purple";
+      const color: MapMarkerConfig["color"] =
+        isHidden || opened
+          ? "grey"
+          : (userColor ?? (isOwn ? "teal" : baseColor));
 
       add({
         id: msg.id,
@@ -236,7 +238,7 @@ export function MapView() {
           title:
             isPrivate && !opened
               ? "Reach nearby to unlock"
-              : isBeyondLocked
+              : isBeyondLocked && !opened
                 ? "Reach nearby to unlock"
                 : msg.content.slice(0, 50) +
                   (msg.content.length > 50 ? "..." : ""),
@@ -250,25 +252,41 @@ export function MapView() {
       const isBeyondLocked = dist > LOCKED_DISTANCE_M;
       const isClaimable = dist <= 20;
       const isOwn = chest.isOwn === true;
-      const icon: MapMarkerConfig["icon"] = isBeyondLocked
-        ? "locked"
-        : isClaimable
-          ? "chest-opened"
-          : "chest";
+      const isClaimed = useGameStore
+        .getState()
+        .claimedChestIds.includes(chest.id);
+
+      const icon: MapMarkerConfig["icon"] = isClaimed
+        ? "chest-opened"
+        : isBeyondLocked
+          ? "locked"
+          : isClaimable
+            ? "chest-opened"
+            : "chest";
+
       add({
         id: `chest-${chest.id}`,
         lat: chest.location.latitude,
         lng: chest.location.longitude,
         alt: chest.location.altitude,
         icon,
-        color: isBeyondLocked ? "grey" : isOwn ? "teal" : "gold",
-        isSelected: selectedChestId === chest.id,
+        color: isClaimed
+          ? "grey"
+          : isBeyondLocked
+            ? "grey"
+            : isOwn
+              ? "teal"
+              : "gold",
+        isSelected: selectedChestId === chest.id && !isClaimed,
         popupItem: {
           id: chest.id,
           type: "chest",
           itemName:
             chest.variant === "snake" ? "Snake Chest" : "Treasure Chest",
-          title: isBeyondLocked ? "Reach nearby to unlock" : chest.content,
+          title:
+            isBeyondLocked && !isClaimed
+              ? "Reach nearby to unlock"
+              : chest.content,
           distance: chest.distance,
         },
       });

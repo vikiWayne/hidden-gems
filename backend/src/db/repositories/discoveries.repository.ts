@@ -58,20 +58,39 @@ export function recordChestDiscovery(userId: string, chestId: string): { finderO
   return { finderOrdinal }
 }
 
-export function getClaimedIds(userId: string): { chestIds: string[]; lootIds: string[] } {
+export function recordMessageDiscovery(userId: string, messageId: string): boolean {
+  const existing = getDb()
+    .prepare(`SELECT id FROM message_discoveries WHERE user_id = ? AND message_id = ?`)
+    .get(userId, messageId) as { id: string } | undefined
+  if (existing) return false
+
+  const id = randomUUID()
+  const foundAt = new Date().toISOString()
+  getDb()
+    .prepare(`INSERT INTO message_discoveries (id, user_id, message_id, found_at) VALUES (?, ?, ?, ?)`)
+    .run(id, userId, messageId, foundAt)
+
+  return true
+}
+
+export function getClaimedIds(userId: string): { chestIds: string[]; lootIds: string[]; messageIds: string[] } {
   const chestRows = getDb()
     .prepare(`SELECT item_id FROM discoveries WHERE user_id = ? AND item_type = 'chest'`)
     .all(userId) as Array<{ item_id: string }>
   const lootRows = getDb()
     .prepare(`SELECT item_id FROM discoveries WHERE user_id = ? AND item_type = 'loot'`)
     .all(userId) as Array<{ item_id: string }>
+  const msgRows = getDb()
+    .prepare(`SELECT message_id FROM message_discoveries WHERE user_id = ?`)
+    .all(userId) as Array<{ message_id: string }>
   return {
     chestIds: chestRows.map((r) => r.item_id),
     lootIds: lootRows.map((r) => r.item_id),
+    messageIds: msgRows.map((r) => r.message_id),
   }
 }
 
-export function getFoundItemsByUser(userId: string): { chests: FoundChest[]; loot: FoundLootItem[] } {
+export function getFoundItemsByUser(userId: string): { chests: FoundChest[]; loot: FoundLootItem[]; messages: any[] } {
   const chestRows = getDb()
     .prepare(
       `SELECT d.id, d.item_id, d.finder_ordinal, d.found_at, c.content, c.xp_reward
@@ -91,6 +110,16 @@ export function getFoundItemsByUser(userId: string): { chests: FoundChest[]; loo
        ORDER BY d.found_at DESC`
     )
     .all(userId) as Array<{ id: string; item_id: string; finder_ordinal: number; found_at: string; type: string; content: string; xp_reward: number; coin_reward: number }>
+
+  const messageRows = getDb()
+    .prepare(
+      `SELECT md.id, md.message_id, md.found_at, m.type, m.content, m.latitude, m.longitude
+       FROM message_discoveries md
+       JOIN messages m ON m.id = md.message_id
+       WHERE md.user_id = ?
+       ORDER BY md.found_at DESC`
+    )
+    .all(userId) as Array<{ id: string; message_id: string; found_at: string; type: string; content: string; latitude: number; longitude: number }>
 
   const chests: FoundChest[] = chestRows.map((r) => ({
     id: r.id,
@@ -112,5 +141,15 @@ export function getFoundItemsByUser(userId: string): { chests: FoundChest[]; loo
     foundAt: r.found_at,
   }))
 
-  return { chests, loot }
+  const messages = messageRows.map((r) => ({
+    id: r.id,
+    itemId: r.message_id,
+    type: r.type,
+    content: r.content,
+    foundAt: r.found_at,
+    latitude: r.latitude,
+    longitude: r.longitude,
+  }))
+
+  return { chests, loot, messages }
 }

@@ -11,12 +11,13 @@ usersRouter.get('/me/items', (req, res) => {
   if (!userId) return res.status(400).json({ message: 'userId required' })
   const createdMessages = getMessagesByCreator(userId)
   const createdChests = getChestsByCreator(userId)
-  const { chests: foundChests, loot: foundLoot } = getFoundItemsByUser(userId)
+  const { chests: foundChests, loot: foundLoot, messages: foundMessages } = getFoundItemsByUser(userId)
   res.json({
     createdMessages,
     createdChests,
     foundChests,
     foundLoot,
+    foundMessages,
   })
 })
 

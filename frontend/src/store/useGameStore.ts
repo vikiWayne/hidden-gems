@@ -20,20 +20,17 @@ export const useGameStore = create<GameState>((set) => ({
   claimedChestIds: [],
   setNearbyChests: (chests) =>
     set((state) => {
-      const filtered = chests.filter(
-        (c) => !state.claimedChestIds.includes(c.id),
-      );
+      const filtered = chests;
       return {
-        nearbyChests: filtered,
+        nearbyChests: chests,
         chestHunterMode:
-          filtered.length > 0 &&
-          (filtered[0]?.distance ?? Infinity) <= CHEST_HUNTER_RADIUS_M,
+          filtered.filter(c => !state.claimedChestIds?.includes(c.id)).length > 0 &&
+          (filtered.filter(c => !state.claimedChestIds?.includes(c.id))[0]?.distance ?? Infinity) <= CHEST_HUNTER_RADIUS_M,
       };
     }),
   setNearbyLootItems: (items) => set({ nearbyLootItems: items }),
   claimChest: (id) =>
     set((s) => ({
-      claimedChestIds: [...s.claimedChestIds, id],
-      nearbyChests: s.nearbyChests.filter((c) => c.id !== id),
+      claimedChestIds: [...(s.claimedChestIds || []), id],
     })),
 }));

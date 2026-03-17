@@ -137,6 +137,7 @@ export const api = {
         lat: params.lat,
         lng: params.lng,
         userId: params.userId,
+        filter: params.filter,
       })}`
     );
     return getMapViewportResponseSchema.parse(data);
@@ -152,6 +153,7 @@ export const api = {
         userId: params.userId,
         userLat: params.userLat,
         userLng: params.userLng,
+        filter: params.filter,
       })}`
     );
     return getMapViewportResponseSchema.parse(data);

@@ -3,6 +3,8 @@ import { useViewportStore } from "@/store/useViewportStore";
 import { useUserStore } from "@/store/useUserStore";
 import { api } from "@/api/client";
 
+import { useAppStore } from "@/store/useAppStore";
+
 /** Padding factor to expand viewport when fetching (1.2 = 20% extra) */
 const VIEWPORT_PADDING = 1.2;
 
@@ -34,6 +36,7 @@ export function useViewportMapItems() {
   const { viewportBounds, setViewportData, setViewportLoading } =
     useViewportStore();
   const { userId } = useUserStore();
+  const mapFilter = useAppStore((s) => s.mapFilter);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchViewport = useCallback(async () => {
@@ -55,6 +58,7 @@ export function useViewportMapItems() {
         minLng: expanded.minLng,
         maxLng: expanded.maxLng,
         userId,
+        filter: mapFilter,
       });
 
       setViewportData({ messages, chests, lootItems });
@@ -67,7 +71,7 @@ export function useViewportMapItems() {
     } finally {
       setViewportLoading(false);
     }
-  }, [viewportBounds, userId, setViewportData, setViewportLoading]);
+  }, [viewportBounds, userId, mapFilter, setViewportData, setViewportLoading]);
 
   useEffect(() => {
     if (!viewportBounds) return;

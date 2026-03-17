@@ -52,3 +52,4 @@
         Level 10: The TapTag Icon (50,000 XP)
 13 - [x] Add 5xp for every message the user found. it is claimed when user click claim button in message.
 14 - List user created tags and found tags/chest.
+15 - Filter items in map - done - not verified

@@ -38,6 +38,8 @@ export interface Message {
   createdBy?: string
   createdAt: string
   markerColor?: MarkerColor
+  rating?: number
+  ratingCount?: number
 }
 
 export interface NearbyResult {
@@ -54,6 +56,8 @@ export interface NearbyResult {
   distance: number
   isOwn?: boolean
   markerColor?: MarkerColor
+  rating?: number
+  ratingCount?: number
 }
 
 const { NEARBY_RADIUS_M, UNLOCK_DISTANCE_M } = GEO_CONFIG
@@ -74,6 +78,8 @@ function rowToMessage(row: MessageRow): Message {
     createdBy: row.created_by ?? undefined,
     createdAt: row.created_at,
     markerColor: (row.marker_color as MarkerColor) ?? undefined,
+    rating: (row as any).rating_count ? ((row as any).rating_sum! / (row as any).rating_count) : 0,
+    ratingCount: (row as any).rating_count ?? 0,
   }
 }
 
@@ -106,8 +112,11 @@ export function createMessage(data: Omit<Message, 'id' | 'createdAt'>): Message 
   return { ...data, id, type: (data.type ?? 'text') as Message['type'], allowedUserIds, createdAt }
 }
 
-export function getNearbyMessages(lat: number, lng: number, _alt?: number, userId?: string): NearbyResult[] {
-  const rows = getDb().prepare(`SELECT * FROM messages`).all() as MessageRow[]
+export function getNearbyMessages(lat: number, lng: number, claimedIds: string[] = [], userId?: string): NearbyResult[] {
+  const rows = getDb().prepare(`SELECT m.*, 
+    (SELECT SUM(rating) FROM item_ratings WHERE item_type='message' AND item_id=m.id) as rating_sum,
+    (SELECT COUNT(*) FROM item_ratings WHERE item_type='message' AND item_id=m.id) as rating_count
+  FROM messages m`).all() as (MessageRow & { rating_sum: number | null, rating_count: number | null })[]
   const results: NearbyResult[] = []
 
   for (const row of rows) {
@@ -118,8 +127,10 @@ export function getNearbyMessages(lat: number, lng: number, _alt?: number, userI
     const isPublic = row.visibility === 'public'
     const allowedUserIds = row.allowed_user_ids ? (JSON.parse(row.allowed_user_ids) as string[]) : []
     const isAllowed = allowedUserIds.includes(userId ?? '')
+    const isClaimed = claimedIds.includes(row.id)
+    const isUnlocked = dist <= UNLOCK_DISTANCE_M
 
-    if (!isPublic && !isAllowed && !isOwn) {
+    if (!isOwn && !isClaimed && !isUnlocked) {
       results.push({
         id: row.id,
         type: row.type as NearbyResult['type'],
@@ -132,9 +143,13 @@ export function getNearbyMessages(lat: number, lng: number, _alt?: number, userI
         createdAt: row.created_at,
         distance: dist,
         isOwn: false,
+        rating: row.rating_count ? (row.rating_sum! / row.rating_count) : 0,
+        ratingCount: row.rating_count ?? 0,
       })
       continue
     }
+
+    if (!isPublic && !isAllowed && !isOwn) continue
 
     results.push({
       id: row.id,
@@ -150,6 +165,8 @@ export function getNearbyMessages(lat: number, lng: number, _alt?: number, userI
       distance: dist,
       isOwn,
       markerColor: (row.marker_color as MarkerColor) ?? undefined,
+      rating: row.rating_count ? (row.rating_sum! / row.rating_count) : 0,
+      ratingCount: row.rating_count ?? 0,
     })
   }
 
@@ -164,12 +181,16 @@ export function getMessagesInViewport(
   maxLng: number,
   userId?: string,
   userLat?: number,
-  userLng?: number
+  userLng?: number,
+  claimedIds: string[] = []
 ): NearbyResult[] {
   const refLat = userLat ?? (minLat + maxLat) / 2
   const refLng = userLng ?? (minLng + maxLng) / 2
 
-  const rows = getDb().prepare(`SELECT * FROM messages`).all() as MessageRow[]
+  const rows = getDb().prepare(`SELECT m.*,
+    (SELECT SUM(rating) FROM item_ratings WHERE item_type='message' AND item_id=m.id) as rating_sum,
+    (SELECT COUNT(*) FROM item_ratings WHERE item_type='message' AND item_id=m.id) as rating_count
+  FROM messages m`).all() as (MessageRow & { rating_sum: number | null, rating_count: number | null })[]
   const results: NearbyResult[] = []
 
   for (const row of rows) {
@@ -180,8 +201,10 @@ export function getMessagesInViewport(
     const isPublic = row.visibility === 'public'
     const allowedUserIds = row.allowed_user_ids ? (JSON.parse(row.allowed_user_ids) as string[]) : []
     const isAllowed = allowedUserIds.includes(userId ?? '')
+    const isClaimed = claimedIds.includes(row.id)
+    const isUnlocked = dist <= UNLOCK_DISTANCE_M
 
-    if (!isPublic && !isAllowed && !isOwn) {
+    if (!isOwn && !isClaimed && !isUnlocked) {
       results.push({
         id: row.id,
         type: row.type as NearbyResult['type'],
@@ -194,9 +217,13 @@ export function getMessagesInViewport(
         createdAt: row.created_at,
         distance: dist,
         isOwn: false,
+        rating: row.rating_count ? (row.rating_sum! / row.rating_count) : 0,
+        ratingCount: row.rating_count ?? 0,
       })
       continue
     }
+
+    if (!isPublic && !isAllowed && !isOwn) continue
 
     results.push({
       id: row.id,
@@ -212,6 +239,8 @@ export function getMessagesInViewport(
       distance: dist,
       isOwn,
       markerColor: (row.marker_color as MarkerColor) ?? undefined,
+      rating: row.rating_count ? (row.rating_sum! / row.rating_count) : 0,
+      ratingCount: row.rating_count ?? 0,
     })
   }
 
@@ -220,7 +249,10 @@ export function getMessagesInViewport(
 }
 
 export function getMessage(id: string, lat: number, lng: number, userId?: string) {
-  const row = getDb().prepare(`SELECT * FROM messages WHERE id = ?`).get(id) as MessageRow | undefined
+  const row = getDb().prepare(`SELECT m.*,
+    (SELECT SUM(rating) FROM item_ratings WHERE item_type='message' AND item_id=m.id) as rating_sum,
+    (SELECT COUNT(*) FROM item_ratings WHERE item_type='message' AND item_id=m.id) as rating_count
+  FROM messages m WHERE id = ?`).get(id) as (MessageRow & { rating_sum: number | null, rating_count: number | null }) | undefined
   if (!row) return null
 
   const dist = haversineDistance(lat, lng, row.latitude, row.longitude)
