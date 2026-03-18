@@ -95,7 +95,16 @@ export function getChestById(id: string): Chest | undefined {
 }
 
 export function getNearbyChests(lat: number, lng: number, userId?: string): NearbyChest[] {
-  const rows = getDb().prepare(`SELECT * FROM chests`).all() as ChestRow[]
+  // Use bounding box to filter at SQL level
+  const latDelta = CHEST_RADIUS_M / 111000
+  const lngDelta = CHEST_RADIUS_M / (111000 * Math.cos(lat * Math.PI / 180))
+
+  const rows = getDb().prepare(`SELECT * FROM chests
+    WHERE latitude BETWEEN ? AND ?
+    AND longitude BETWEEN ? AND ?`).all(
+    lat - latDelta, lat + latDelta,
+    lng - lngDelta, lng + lngDelta
+  ) as ChestRow[]
 
   return rows
     .map((row) => ({
@@ -126,7 +135,12 @@ export function getChestsInViewport(
   const refLat = userLat ?? (minLat + maxLat) / 2
   const refLng = userLng ?? (minLng + maxLng) / 2
 
-  const rows = getDb().prepare(`SELECT * FROM chests`).all() as ChestRow[]
+  // Filter at SQL level using bounding box
+  const rows = getDb().prepare(`SELECT * FROM chests
+    WHERE latitude BETWEEN ? AND ?
+    AND longitude BETWEEN ? AND ?`).all(
+    minLat, maxLat, minLng, maxLng
+  ) as ChestRow[]
 
   return rows
     .filter((row) => isInBoundingBox(row.latitude, row.longitude, minLat, maxLat, minLng, maxLng))

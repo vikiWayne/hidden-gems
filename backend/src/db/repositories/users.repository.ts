@@ -12,9 +12,12 @@ export function searchUsers(query: string, limit = 5): User[] {
   const q = query.toLowerCase().trim()
   if (!q) return []
 
+  // Escape special LIKE characters (%, _) to prevent SQL injection
+  const escapedQ = q.replace(/[%_]/g, '\\$&')
+
   const rows = getDb()
-    .prepare(`SELECT id, username FROM users WHERE LOWER(username) LIKE ? ORDER BY username LIMIT ?`)
-    .all(`%${q}%`, limit) as { id: string; username: string }[]
+    .prepare(`SELECT id, username FROM users WHERE LOWER(username) LIKE ? ESCAPE '\\' ORDER BY username LIMIT ?`)
+    .all(`%${escapedQ}%`, limit) as { id: string; username: string }[]
 
   return rows.map((r) => ({ id: r.id, username: r.username }))
 }

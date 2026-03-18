@@ -99,7 +99,12 @@ export function getLootItemsInViewport(
   const refLat = userLat ?? (minLat + maxLat) / 2
   const refLng = userLng ?? (minLng + maxLng) / 2
 
-  const rows = getDb().prepare(`SELECT * FROM loot_items`).all() as LootItemRow[]
+  // Filter at SQL level using bounding box
+  const rows = getDb().prepare(`SELECT * FROM loot_items
+    WHERE latitude BETWEEN ? AND ?
+    AND longitude BETWEEN ? AND ?`).all(
+    minLat, maxLat, minLng, maxLng
+  ) as LootItemRow[]
 
   return rows
     .filter((row) => isInBoundingBox(row.latitude, row.longitude, minLat, maxLat, minLng, maxLng))

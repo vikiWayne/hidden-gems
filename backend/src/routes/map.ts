@@ -1,7 +1,10 @@
 import { Router } from 'express'
 import { getMessagesInViewport, getNearbyMessages } from '../db/repositories/messages.repository.js'
+import type { NearbyResult } from '../db/repositories/messages.repository.js'
 import { getChestsInViewport, getNearbyChests } from '../db/repositories/chests.repository.js'
+import type { NearbyChest } from '../db/repositories/chests.repository.js'
 import { getLootItemsInViewport, getLootItemsNearby } from '../db/repositories/lootItems.repository.js'
+import type { NearbyLootItem } from '../db/repositories/lootItems.repository.js'
 import { getClaimedIds } from '../db/repositories/discoveries.repository.js'
 import {
   PENALTY_CONFIG,
@@ -22,8 +25,9 @@ mapRouter.get('/nearby', (req, res) => {
   const lng = parseFloat(req.query.lng as string)
   const userId = req.query.userId as string | undefined
 
-  if (isNaN(lat) || isNaN(lng)) {
-    return res.status(400).json({ message: 'lat, lng required as numbers' })
+  // Validate coordinates
+  if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+    return res.status(400).json({ error: 'Invalid lat/lng. Lat must be -90 to 90, Lng must be -180 to 180' })
   }
 
   const filter = req.query.filter as string | undefined
@@ -31,9 +35,9 @@ mapRouter.get('/nearby', (req, res) => {
   const fetchChests = !filter || filter === 'all' || filter === 'chests'
   const fetchLoot = !filter || filter === 'all' || filter === 'loot'
 
-  let messages: any[] = []
-  let chests: any[] = []
-  let lootItems: any[] = []
+  let messages: NearbyResult[] = []
+  let chests: NearbyChest[] = []
+  let lootItems: NearbyLootItem[] = []
 
   let claimedMessageIds: string[] = []
   let claimedChestIds: string[] = []
@@ -78,20 +82,23 @@ mapRouter.get('/viewport', (req, res) => {
   const userLat = req.query.userLat != null ? parseFloat(req.query.userLat as string) : undefined
   const userLng = req.query.userLng != null ? parseFloat(req.query.userLng as string) : undefined
 
+  // Validate coordinates
   if (
     isNaN(minLat) ||
     isNaN(maxLat) ||
     isNaN(minLng) ||
-    isNaN(maxLng)
+    isNaN(maxLng) ||
+    minLat < -90 || maxLat > 90 ||
+    minLng < -180 || maxLng > 180
   ) {
     return res.status(400).json({
-      message: 'minLat, maxLat, minLng, maxLng required as numbers',
+      error: 'Invalid coordinates. Lat must be -90 to 90, Lng must be -180 to 180',
     })
   }
 
   if (minLat >= maxLat || minLng >= maxLng) {
     return res.status(400).json({
-      message: 'minLat < maxLat and minLng < maxLng required',
+      error: 'minLat < maxLat and minLng < maxLng required',
     })
   }
 
@@ -100,9 +107,9 @@ mapRouter.get('/viewport', (req, res) => {
   const fetchChests = !filter || filter === 'all' || filter === 'chests'
   const fetchLoot = !filter || filter === 'all' || filter === 'loot'
 
-  let messages: any[] = []
-  let chests: any[] = []
-  let lootItems: any[] = []
+  let messages: NearbyResult[] = []
+  let chests: NearbyChest[] = []
+  let lootItems: NearbyLootItem[] = []
 
   let claimedMessageIds: string[] = []
   let claimedChestIds: string[] = []

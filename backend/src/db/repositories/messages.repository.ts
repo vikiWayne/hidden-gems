@@ -113,10 +113,19 @@ export function createMessage(data: Omit<Message, 'id' | 'createdAt'>): Message 
 }
 
 export function getNearbyMessages(lat: number, lng: number, claimedIds: string[] = [], userId?: string): NearbyResult[] {
-  const rows = getDb().prepare(`SELECT m.*, 
+  // Use bounding box to filter at SQL level (approx 111km per degree)
+  const latDelta = NEARBY_RADIUS_M / 111000
+  const lngDelta = NEARBY_RADIUS_M / (111000 * Math.cos(lat * Math.PI / 180))
+
+  const rows = getDb().prepare(`SELECT m.*,
     (SELECT SUM(rating) FROM item_ratings WHERE item_type='message' AND item_id=m.id) as rating_sum,
     (SELECT COUNT(*) FROM item_ratings WHERE item_type='message' AND item_id=m.id) as rating_count
-  FROM messages m`).all() as (MessageRow & { rating_sum: number | null, rating_count: number | null })[]
+  FROM messages m
+  WHERE m.latitude BETWEEN ? AND ?
+    AND m.longitude BETWEEN ? AND ?`).all(
+    lat - latDelta, lat + latDelta,
+    lng - lngDelta, lng + lngDelta
+  ) as (MessageRow & { rating_sum: number | null, rating_count: number | null })[]
   const results: NearbyResult[] = []
 
   for (const row of rows) {
@@ -187,10 +196,15 @@ export function getMessagesInViewport(
   const refLat = userLat ?? (minLat + maxLat) / 2
   const refLng = userLng ?? (minLng + maxLng) / 2
 
+  // Filter at SQL level using bounding box
   const rows = getDb().prepare(`SELECT m.*,
     (SELECT SUM(rating) FROM item_ratings WHERE item_type='message' AND item_id=m.id) as rating_sum,
     (SELECT COUNT(*) FROM item_ratings WHERE item_type='message' AND item_id=m.id) as rating_count
-  FROM messages m`).all() as (MessageRow & { rating_sum: number | null, rating_count: number | null })[]
+  FROM messages m
+  WHERE m.latitude BETWEEN ? AND ?
+    AND m.longitude BETWEEN ? AND ?`).all(
+    minLat, maxLat, minLng, maxLng
+  ) as (MessageRow & { rating_sum: number | null, rating_count: number | null })[]
   const results: NearbyResult[] = []
 
   for (const row of rows) {

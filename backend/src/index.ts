@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import rateLimit from 'express-rate-limit'
 import { getDb } from './db/connection.js'
 import { runMigrations } from './db/migrate.js'
 import { seedDatabase } from './db/seed.js'
@@ -14,7 +15,20 @@ import { lootItemsRouter } from './routes/lootItems.js'
 const app = express()
 const PORT = process.env.PORT ?? 3001
 
-app.use(cors({ origin: ['http://localhost:5173', 'http://127.0.0.1:5173'] }))
+// CORS from environment variable (comma-separated list)
+const corsOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map(o => o.trim())
+  : ['http://localhost:5173', 'http://127.0.0.1:5173']
+app.use(cors({ origin: corsOrigins }))
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+app.use('/api', limiter)
 app.use(express.json({ limit: '10mb' }))
 
 app.use('/api/messages', messagesRouter)
@@ -35,7 +49,13 @@ app.get('/api/health', (_req, res) => {
 })
 
 runMigrations()
-seedDatabase()
+// seedDatabase() // Creates mock data
+
+// Global error handler middleware
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error('Unhandled error:', err)
+  res.status(500).json({ error: 'Internal server error' })
+})
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)

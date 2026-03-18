@@ -39,38 +39,65 @@ export function recordChestDiscovery(userId: string, chestId: string): { finderO
   const chest = getDb().prepare(`SELECT id FROM chests WHERE id = ?`).get(chestId) as { id: string } | undefined
   if (!chest) return null
 
-  const existing = getDb()
-    .prepare(`SELECT id FROM discoveries WHERE user_id = ? AND item_type = 'chest' AND item_id = ?`)
-    .get(userId, chestId) as { id: string } | undefined
-  if (existing) return null
+  // Use a transaction to prevent race conditions
+  const db = getDb()
+  try {
+    db.exec('BEGIN IMMEDIATE') // Acquire write lock immediately
 
-  const count = getDb()
-    .prepare(`SELECT COUNT(*) as c FROM discoveries WHERE item_type = 'chest' AND item_id = ?`)
-    .get(chestId) as { c: number }
-  const finderOrdinal = count.c + 1
+    const existing = db
+      .prepare(`SELECT id FROM discoveries WHERE user_id = ? AND item_type = 'chest' AND item_id = ?`)
+      .get(userId, chestId) as { id: string } | undefined
+    if (existing) {
+      db.exec('ROLLBACK')
+      return null
+    }
 
-  const id = randomUUID()
-  const foundAt = new Date().toISOString()
-  getDb()
-    .prepare(`INSERT INTO discoveries (id, user_id, item_type, item_id, finder_ordinal, found_at) VALUES (?, ?, 'chest', ?, ?, ?)`)
-    .run(id, userId, chestId, finderOrdinal, foundAt)
+    const count = db
+      .prepare(`SELECT COUNT(*) as c FROM discoveries WHERE item_type = 'chest' AND item_id = ?`)
+      .get(chestId) as { c: number }
+    const finderOrdinal = count.c + 1
 
-  return { finderOrdinal }
+    const id = randomUUID()
+    const foundAt = new Date().toISOString()
+    db
+      .prepare(`INSERT INTO discoveries (id, user_id, item_type, item_id, finder_ordinal, found_at) VALUES (?, ?, 'chest', ?, ?, ?)`)
+      .run(id, userId, chestId, finderOrdinal, foundAt)
+
+    db.exec('COMMIT')
+    return { finderOrdinal }
+  } catch (err) {
+    db.exec('ROLLBACK')
+    console.error('Error recording chest discovery:', err)
+    return null
+  }
 }
 
 export function recordMessageDiscovery(userId: string, messageId: string): boolean {
-  const existing = getDb()
-    .prepare(`SELECT id FROM message_discoveries WHERE user_id = ? AND message_id = ?`)
-    .get(userId, messageId) as { id: string } | undefined
-  if (existing) return false
+  const db = getDb()
+  try {
+    db.exec('BEGIN IMMEDIATE')
 
-  const id = randomUUID()
-  const foundAt = new Date().toISOString()
-  getDb()
-    .prepare(`INSERT INTO message_discoveries (id, user_id, message_id, found_at) VALUES (?, ?, ?, ?)`)
-    .run(id, userId, messageId, foundAt)
+    const existing = db
+      .prepare(`SELECT id FROM message_discoveries WHERE user_id = ? AND message_id = ?`)
+      .get(userId, messageId) as { id: string } | undefined
+    if (existing) {
+      db.exec('ROLLBACK')
+      return false
+    }
 
-  return true
+    const id = randomUUID()
+    const foundAt = new Date().toISOString()
+    db
+      .prepare(`INSERT INTO message_discoveries (id, user_id, message_id, found_at) VALUES (?, ?, ?, ?)`)
+      .run(id, userId, messageId, foundAt)
+
+    db.exec('COMMIT')
+    return true
+  } catch (err) {
+    db.exec('ROLLBACK')
+    console.error('Error recording message discovery:', err)
+    return false
+  }
 }
 
 export function getClaimedIds(userId: string): { chestIds: string[]; lootIds: string[]; messageIds: string[] } {

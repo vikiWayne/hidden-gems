@@ -54,7 +54,7 @@ export function MapView() {
     flyToMarkerPosition,
     setFlyToMarkerPosition,
   } = useAppStore();
-  const { nearbyChests, nearbyLootItems, chestHunterMode } = useGameStore();
+  const { nearbyChests, nearbyLootItems, chestHunterMode, claimedChestIds } = useGameStore();
   const {
     viewportBounds,
     viewportMessages,
@@ -252,9 +252,7 @@ export function MapView() {
       const isBeyondLocked = dist > LOCKED_DISTANCE_M;
       const isClaimable = dist <= 20;
       const isOwn = chest.isOwn === true;
-      const isClaimed = useGameStore
-        .getState()
-        .claimedChestIds.includes(chest.id);
+      const isClaimed = claimedChestIds.includes(chest.id);
 
       const icon: MapMarkerConfig["icon"] = isClaimed
         ? "chest-opened"
@@ -419,6 +417,7 @@ export function MapView() {
     selectedMessage,
     selectedChestId,
     isMessageOpened,
+    claimedChestIds,
   ]);
 
   return (
