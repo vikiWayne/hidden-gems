@@ -22,11 +22,11 @@ export const themes: Record<ThemeKey, ThemeSurface> = {
     border: "#bae6fd",
   },
   dark: {
-    bgPrimary: "#131f24",
-    bgSecondary: "#232d33",
-    textPrimary: "#eeeeee",
-    textMuted: "#afafaf",
-    border: "#37464f",
+    bgPrimary: "#101a1f",
+    bgSecondary: "#1e2a31",
+    textPrimary: "#f3f7fa",
+    textMuted: "#c7d4de",
+    border: "#4a5d69",
   },
   "chest-hunter": {
     bgPrimary: "#2c1e14",

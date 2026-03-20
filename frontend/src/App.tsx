@@ -38,34 +38,34 @@ function AppContent() {
     <ErrorBoundary>
       <div className="min-h-screen font-['Nunito']" data-theme={currentTheme}>
         <AppLayout
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onSettingsClick={() => setIsSettingsOpen(true)}
-        onDropClick={() => setIsDropModalOpen(true)}
-        modals={
-          <AnimatePresence>
-            {isDropModalOpen && (
-              <DropMessageModal onClose={() => setIsDropModalOpen(false)} />
-            )}
-            {isSettingsOpen && (
-              <SettingsModal
-                isOpen={isSettingsOpen}
-                onClose={() => setIsSettingsOpen(false)}
-              />
-            )}
-            <StackItemDetailModal />
-            <ClaimRewardFlyover />
-          </AnimatePresence>
-        }
-      >
-        <Routes>
-          <Route path="/explore" element={<ExplorePage />} />
-          <Route path="/my-collection" element={<MyCollectionPage />} />
-          <Route path="/mytags" element={<Navigate to="/my-collection" replace />} />
-          <Route path="/leaderboard" element={<LeaderboardPage />} />
-        </Routes>
-      </AppLayout>
-    </div>
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onSettingsClick={() => setIsSettingsOpen(true)}
+          onDropClick={() => setIsDropModalOpen(true)}
+          modals={
+            <AnimatePresence>
+              {isDropModalOpen && (
+                <DropMessageModal onClose={() => setIsDropModalOpen(false)} />
+              )}
+              {isSettingsOpen && (
+                <SettingsModal
+                  isOpen={isSettingsOpen}
+                  onClose={() => setIsSettingsOpen(false)}
+                />
+              )}
+              <StackItemDetailModal />
+              <ClaimRewardFlyover />
+            </AnimatePresence>
+          }
+        >
+          <Routes>
+            <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/my-collection" element={<MyCollectionPage />} />
+            <Route path="/mytags" element={<Navigate to="/my-collection" replace />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+          </Routes>
+        </AppLayout>
+      </div>
     </ErrorBoundary>
   );
 }

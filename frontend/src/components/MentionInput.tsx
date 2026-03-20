@@ -1,6 +1,13 @@
-import React, { useState, useRef } from "react";
+import React, {
+  useDeferredValue,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUserStore } from "@/store/useUserStore";
+import { useSearchUsersQuery } from "@/services";
 
 interface MentionInputProps {
   value: string;
@@ -18,11 +25,25 @@ export function MentionInput({
   className = "",
 }: MentionInputProps) {
   const { friends } = useUserStore();
+  const inputId = useId();
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [suggestions, setSuggestions] = useState(friends);
+  const [mentionQuery, setMentionQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [cursorPos, setCursorPos] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const deferredMentionQuery = useDeferredValue(mentionQuery);
+
+  const { data: searchedUsers } = useSearchUsersQuery(
+    deferredMentionQuery,
+    showSuggestions && deferredMentionQuery.length > 0,
+  );
+
+  const suggestions = useMemo(() => {
+    if (!showSuggestions) return [];
+    if (!deferredMentionQuery) return friends.slice(0, 8);
+    const users = searchedUsers?.users ?? [];
+    return users.slice(0, 8);
+  }, [showSuggestions, deferredMentionQuery, friends, searchedUsers]);
 
   // Parse tagged user IDs from text: @username[id]
   const getTaggedUserIds = (text: string) => {
@@ -42,15 +63,13 @@ export function MentionInput({
     if (lastAt !== -1 && (lastAt === 0 || /\s/.test(newVal[lastAt - 1]))) {
       const query = newVal.slice(lastAt + 1, cursor);
       if (!/\s/.test(query)) {
-        const filtered = friends.filter((f) =>
-          f.username.toLowerCase().includes(query.toLowerCase()),
-        );
-        setSuggestions(filtered);
-        setShowSuggestions(filtered.length > 0);
+        setMentionQuery(query.trim());
+        setShowSuggestions(true);
         setSelectedIndex(0);
         return;
       }
     }
+    setMentionQuery("");
     setShowSuggestions(false);
   };
 
@@ -63,6 +82,7 @@ export function MentionInput({
 
     onChange(newVal, getTaggedUserIds(newVal));
     setShowSuggestions(false);
+    setMentionQuery("");
 
     // Focus back and set cursor
     setTimeout(() => {
@@ -87,15 +107,19 @@ export function MentionInput({
       );
     } else if (e.key === "Enter" || e.key === "Tab") {
       e.preventDefault();
-      insertMention(suggestions[selectedIndex]);
+      if (suggestions[selectedIndex]) {
+        insertMention(suggestions[selectedIndex]);
+      }
     } else if (e.key === "Escape") {
       setShowSuggestions(false);
+      setMentionQuery("");
     }
   };
 
   return (
     <div className="relative">
       <textarea
+        id={inputId}
         ref={textareaRef}
         value={value}
         onChange={handleInputChange}
@@ -106,7 +130,7 @@ export function MentionInput({
       />
 
       <AnimatePresence>
-        {showSuggestions && (
+        {showSuggestions && suggestions.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -123,11 +147,10 @@ export function MentionInput({
                 <button
                   key={friend.id}
                   onClick={() => insertMention(friend)}
-                  className={`w-full flex items-center gap-3 p-3 text-left transition-colors ${
-                    i === selectedIndex
+                  className={`w-full flex items-center gap-3 p-3 text-left transition-colors ${i === selectedIndex
                       ? "bg-[var(--color-game-purple)] text-white"
                       : "hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]"
-                  }`}
+                    }`}
                 >
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${i === selectedIndex ? "bg-white/20" : "bg-[var(--color-game-purple)]/10 text-[var(--color-game-purple)]"}`}

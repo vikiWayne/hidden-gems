@@ -59,7 +59,7 @@ export function ProximityCard() {
   if (!selectedMessage) {
     return (
       <div className="p-6 rounded-[var(--radius-game)] border-4 border-[var(--color-border)] bg-[var(--color-bg-primary)] shadow-[0_4px_0_var(--color-border)]">
-        <h3 className="text-xl font-black text-[var(--color-text-muted)]">
+        <h3 className="text-xl font-black text-[var(--color-text-primary)]">
           No tags detected...
         </h3>
         <p className="text-[var(--color-text-muted)] mt-2 font-medium">
@@ -76,24 +76,24 @@ export function ProximityCard() {
 
   const statusColors = isUnlocked
     ? {
-        border: "border-[var(--color-game-green)]",
-        text: "text-[var(--color-game-green)]",
-        shadow: "shadow-[0_8px_0_var(--color-game-green-dark)]",
-        label: "✨ Tag Unlocked!",
-      }
+      border: "border-[var(--color-game-green)]",
+      text: "text-[var(--color-game-green)]",
+      shadow: "shadow-[0_8px_0_var(--color-game-green-dark)]",
+      label: "✨ Tag Unlocked!",
+    }
     : isNear
       ? {
-          border: "border-[var(--color-game-orange)]",
-          text: "text-[var(--color-game-orange)]",
-          shadow: "shadow-[0_8px_0_var(--color-game-orange-dark)]",
-          label: "🔥 Almost There!",
-        }
+        border: "border-[var(--color-game-orange)]",
+        text: "text-[var(--color-game-orange)]",
+        shadow: "shadow-[0_8px_0_var(--color-game-orange-dark)]",
+        label: "🔥 Almost There!",
+      }
       : {
-          border: "border-[var(--color-game-blue)]",
-          text: "text-[var(--color-game-blue)]",
-          shadow: "shadow-[0_8px_0_var(--color-game-blue-dark)]",
-          label: "📡 Tag Detected",
-        };
+        border: "border-[var(--color-game-blue)]",
+        text: "text-[var(--color-game-blue)]",
+        shadow: "shadow-[0_8px_0_var(--color-game-blue-dark)]",
+        label: "📡 Tag Detected",
+      };
 
   return (
     <motion.div
@@ -208,11 +208,10 @@ export function ProximityCard() {
                       lng: item.location.longitude,
                     });
                   }}
-                  className={`bg-[var(--color-bg-primary)] border-2 rounded-[1rem] p-3 flex flex-col gap-2 shadow-[0_4px_0_var(--color-border)] cursor-pointer group transition-all active:translate-y-1 active:shadow-none ${
-                    isSelected
+                  className={`bg-[var(--color-bg-primary)] border-2 rounded-[1rem] p-3 flex flex-col gap-2 shadow-[0_4px_0_var(--color-border)] cursor-pointer group transition-all active:translate-y-1 active:shadow-none ${isSelected
                       ? "border-[var(--color-game-purple)] shadow-[0_4px_0_var(--color-game-purple-dark)] ring-2 ring-[var(--color-game-purple)]/30"
                       : "border-[var(--color-border)] hover:border-[var(--color-text-muted)]"
-                  }`}
+                    }`}
                 >
                   <div className="flex justify-between items-start">
                     <div className={`p-2 rounded-xl ${bgClass} ${colorClass}`}>

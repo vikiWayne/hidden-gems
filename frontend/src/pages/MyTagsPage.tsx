@@ -61,11 +61,10 @@ function TagCard({
       initial={false}
       animate={{ height: "auto" }}
       transition={{ type: "spring", damping: 30, stiffness: 300 }}
-      className={`rounded-2xl border-4 transition-all duration-200 overflow-hidden ${
-        isExpanded
+      className={`rounded-2xl border-4 transition-all duration-200 overflow-hidden ${isExpanded
           ? "border-[var(--color-game-purple)] shadow-[0_8px_0_var(--color-game-purple-dark)] mb-4"
           : "border-[var(--color-border)] bg-[var(--color-bg-primary)] shadow-[0_4px_0_var(--color-border)]"
-      }`}
+        }`}
     >
       <button
         onClick={onToggle}
@@ -275,10 +274,9 @@ function EditMessageModal({
                   onClick={() => setVisibility(v)}
                   className={`
                     py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all border-4
-                    ${
-                      visibility === v
-                        ? "bg-[var(--color-game-purple)] text-white border-transparent shadow-[0_4px_0_var(--color-game-purple-dark)] translate-y-[-2px]"
-                        : "bg-zinc-100 dark:bg-zinc-800 text-[var(--color-text-muted)] border-transparent"
+                    ${visibility === v
+                      ? "bg-[var(--color-game-purple)] text-white border-transparent shadow-[0_4px_0_var(--color-game-purple-dark)] translate-y-[-2px]"
+                      : "bg-zinc-100 dark:bg-zinc-800 text-[var(--color-text-muted)] border-transparent"
                     }
                   `}
                 >

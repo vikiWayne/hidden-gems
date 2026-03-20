@@ -87,11 +87,11 @@ export function StackItemDetailModal() {
             <div className="grid grid-cols-2 gap-3 text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)]">
               <div className="flex items-center gap-2 p-3 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
                 <Clock className="w-4 h-4" />
-                <span>{date}</span>
+                <span className="text-[var(--color-text-primary)]">{date}</span>
               </div>
               <div className="flex items-center gap-2 p-3 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
                 <Award className="w-4 h-4 text-[var(--color-game-purple)]" />
-                <span>
+                <span className="text-[var(--color-text-primary)]">
                   {"xpReward" in item ? item.xpReward : 10} XP Possible
                 </span>
               </div>

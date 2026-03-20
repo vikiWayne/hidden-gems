@@ -7,6 +7,8 @@ import { useRuntimeConfigStore } from "@/store/useRuntimeConfigStore";
 import { api } from "@/api/client";
 import { Award } from "lucide-react";
 import { useEffect, useRef, useCallback, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import type { GetMapViewportResponse, GetMyItemsResponse } from "@/api/types/responses";
 
 const ANIMATION_DURATION_MS = 1200;
 const COIN_COUNT = 8;
@@ -77,6 +79,7 @@ export function ClaimRewardFlyover() {
   const { addXp, addCoins, userId } = useUserStore();
   const { claimChest } = useGameStore();
   const unlockDistance = useRuntimeConfigStore((s) => s.geo.UNLOCK_DISTANCE_M);
+  const queryClient = useQueryClient();
   const hasAppliedRef = useRef(false);
   const soundPlayedRef = useRef(false);
 
@@ -86,15 +89,52 @@ export function ClaimRewardFlyover() {
     addXp(claimAnimation.xp);
     addCoins(claimAnimation.coins);
     if (claimAnimation.chestId && userId) {
+      const { nearbyChests } = useGameStore.getState();
+      const claimedChest = nearbyChests.find((c) => c.id === claimAnimation.chestId);
+
       try {
         await api.claimChest(claimAnimation.chestId, userId);
+        queryClient.setQueriesData(
+          { queryKey: ["map"] },
+          (prev: GetMapViewportResponse | undefined) =>
+            prev
+              ? {
+                ...prev,
+                chests: prev.chests.filter((c) => c.id !== claimAnimation.chestId),
+              }
+              : prev
+        );
+        queryClient.setQueriesData(
+          { queryKey: ["users", "me", "items"] },
+          (prev: GetMyItemsResponse | undefined) => {
+            if (!prev || !claimedChest) return prev;
+            return {
+              ...prev,
+              foundChests: [
+                {
+                  id: `temp-found-${Date.now()}`,
+                  itemId: claimedChest.id,
+                  content: claimedChest.content,
+                  xpReward: claimedChest.xpReward,
+                  finderOrdinal: 0,
+                  foundAt: new Date().toISOString(),
+                },
+                ...prev.foundChests,
+              ],
+            };
+          }
+        );
       } catch {
-        // Best-effort: still mark as claimed locally
+        addXp(-claimAnimation.xp);
+        addCoins(-claimAnimation.coins);
+        clearClaimAnimation();
+        return;
       }
       claimChest(claimAnimation.chestId);
+      queryClient.invalidateQueries({ queryKey: ["users", "me", "items", userId] });
+      queryClient.invalidateQueries({ queryKey: ["map"] });
 
       // Select next nearest item (message or chest)
-      const { nearbyChests } = useGameStore.getState();
       const { nearbyMessages } = useAppStore.getState();
       const unopenedMessages = nearbyMessages.filter((m) => !isMessageOpened(m.id));
       const items = [
@@ -140,6 +180,7 @@ export function ClaimRewardFlyover() {
     setSelectedChestId,
     setProximityState,
     unlockDistance,
+    queryClient,
   ]);
 
   useEffect(() => {
@@ -158,7 +199,7 @@ export function ClaimRewardFlyover() {
     return () => clearTimeout(t);
   }, [claimAnimation, applyReward]);
 
-  const [coinOffsets] = useState<{x: number, y: number}[]>(() => 
+  const [coinOffsets] = useState<{ x: number, y: number }[]>(() =>
     Array.from({ length: COIN_COUNT }).map(() => ({
       x: (Math.random() - 0.5) * 24,
       y: (Math.random() - 0.5) * 24,

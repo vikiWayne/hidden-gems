@@ -15,6 +15,7 @@ import { errorHandler } from './middleware/errorHandler.js'
 import { requestLogger } from './middleware/requestLogger.js'
 import { healthController } from './controllers/health.controller.js'
 import { logger } from './lib/logger.js'
+import { seedDatabase } from './db/seed.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 3001
@@ -48,7 +49,7 @@ app.use('/api/ratings', ratingsRouter)
 app.get('/api/health', healthController)
 
 runMigrations()
-// seedDatabase() // Optional local mock data
+seedDatabase() // Optional local mock data
 
 app.use(errorHandler)
 

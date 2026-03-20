@@ -487,7 +487,7 @@ export function LeafletMap({
                 <Popup className="map-stack-popup">
                   <StackPopupContent
                     items={m.items}
-                    onSelect={onStackItemSelect ?? (() => {})}
+                    onSelect={onStackItemSelect ?? (() => { })}
                   />
                 </Popup>
               ) : m.popup ? (

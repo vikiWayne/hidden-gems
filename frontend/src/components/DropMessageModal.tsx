@@ -267,12 +267,12 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
     dropType === "chest"
       ? content.trim().length > 0
       : (messageType === "text" &&
-          content.trim() &&
-          (visibility !== "private" || allowedUserIds.length > 0)) ||
-        ((messageType === "voice" ||
-          messageType === "image" ||
-          messageType === "video") &&
-          mediaData);
+        content.trim() &&
+        (visibility !== "private" || allowedUserIds.length > 0)) ||
+      ((messageType === "voice" ||
+        messageType === "image" ||
+        messageType === "video") &&
+        mediaData);
 
   return (
     <div
@@ -337,10 +337,9 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
                   onClick={() => setDropType(t.id as any)}
                   className={`
                     flex items-center justify-center gap-2 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all
-                    ${
-                      dropType === t.id
-                        ? `${t.activeColor} text-white translate-y-[-2px]`
-                        : "bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] border-2 border-[var(--color-border)] active:translate-y-0.5"
+                    ${dropType === t.id
+                      ? `${t.activeColor} text-white translate-y-[-2px]`
+                      : "bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] border-2 border-[var(--color-border)] active:translate-y-0.5"
                     }
                   `}
                 >
@@ -394,10 +393,9 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
                       }}
                       className={`
                         flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 transition-all
-                        ${
-                          messageType === t.id
-                            ? "bg-[var(--color-game-purple)] text-white border-transparent shadow-[0_4px_0_var(--color-game-purple-dark)] translate-y-[-2px]"
-                            : "bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] border-[var(--color-border)] active:translate-y-0.5"
+                        ${messageType === t.id
+                          ? "bg-[var(--color-game-purple)] text-white border-transparent shadow-[0_4px_0_var(--color-game-purple-dark)] translate-y-[-2px]"
+                          : "bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] border-[var(--color-border)] active:translate-y-0.5"
                         }
                       `}
                     >
@@ -545,11 +543,10 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
                       key={c}
                       type="button"
                       onClick={() => setMarkerColor(c)}
-                      className={`w-9 h-9 rounded-xl border-2 transition-all ${
-                        markerColor === c
+                      className={`w-9 h-9 rounded-xl border-2 transition-all ${markerColor === c
                           ? "border-[var(--color-text-primary)] scale-110 shadow-lg"
                           : "border-[var(--color-border)] hover:scale-105"
-                      }`}
+                        }`}
                       style={{
                         backgroundColor:
                           c === "purple"

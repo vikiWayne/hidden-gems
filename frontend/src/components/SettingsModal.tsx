@@ -78,10 +78,9 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     onClick={() => setTheme(item.id as Theme)}
                     className={`
                       flex flex-col items-center gap-2 p-4 rounded-3xl border-2 transition-all group
-                      ${
-                        isActive
-                          ? `${item.activeBg} text-white border-transparent ${item.activeShadow} translate-y-[-2px]`
-                          : "bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:border-[var(--color-text-muted)] active:translate-y-0.5"
+                      ${isActive
+                        ? `${item.activeBg} text-white border-transparent ${item.activeShadow} translate-y-[-2px]`
+                        : "bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:border-[var(--color-text-muted)] active:translate-y-0.5"
                       }
                     `}
                   >
