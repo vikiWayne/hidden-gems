@@ -5,6 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { getDb } from './connection.js'
+import { logger } from '../lib/logger.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -32,6 +33,6 @@ export function runMigrations(): void {
     const sql = fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf-8')
     db.exec(sql)
     db.prepare(`INSERT INTO ${MIGRATIONS_TABLE} (name, applied_at) VALUES (?, ?)`).run(name, new Date().toISOString())
-    console.log(`[db] Applied migration: ${name}`)
+    logger.info('db_migration_applied', { name })
   }
 }

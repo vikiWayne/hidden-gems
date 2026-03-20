@@ -24,6 +24,11 @@ export interface MessageRow {
   created_at: string
 }
 
+interface MessageRatingRow extends MessageRow {
+  rating_sum?: number | null
+  rating_count?: number | null
+}
+
 export interface Message {
   id: string
   type: 'text' | 'voice' | 'image' | 'video'
@@ -62,7 +67,7 @@ export interface NearbyResult {
 
 const { NEARBY_RADIUS_M, UNLOCK_DISTANCE_M } = GEO_CONFIG
 
-function rowToMessage(row: MessageRow): Message {
+function rowToMessage(row: MessageRatingRow): Message {
   const allowedUserIds = row.allowed_user_ids ? (JSON.parse(row.allowed_user_ids) as string[]) : []
   return {
     id: row.id,
@@ -78,8 +83,8 @@ function rowToMessage(row: MessageRow): Message {
     createdBy: row.created_by ?? undefined,
     createdAt: row.created_at,
     markerColor: (row.marker_color as MarkerColor) ?? undefined,
-    rating: (row as any).rating_count ? ((row as any).rating_sum! / (row as any).rating_count) : 0,
-    ratingCount: (row as any).rating_count ?? 0,
+    rating: row.rating_count ? (row.rating_sum! / row.rating_count) : 0,
+    ratingCount: row.rating_count ?? 0,
   }
 }
 

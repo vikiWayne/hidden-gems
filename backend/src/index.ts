@@ -1,9 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import rateLimit from 'express-rate-limit'
-import { getDb } from './db/connection.js'
+import { closeDb } from './db/connection.js'
 import { runMigrations } from './db/migrate.js'
-import { seedDatabase } from './db/seed.js'
 import { messagesRouter } from './routes/messages.js'
 import { chestsRouter } from './routes/chests.js'
 import { leaderboardRouter } from './routes/leaderboard.js'
@@ -11,6 +10,11 @@ import { usersRouter } from './routes/users.js'
 import { seedRouter } from './routes/seed.js'
 import { mapRouter } from './routes/map.js'
 import { lootItemsRouter } from './routes/lootItems.js'
+import { ratingsRouter } from './routes/ratings.js'
+import { errorHandler } from './middleware/errorHandler.js'
+import { requestLogger } from './middleware/requestLogger.js'
+import { healthController } from './controllers/health.controller.js'
+import { logger } from './lib/logger.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 3001
@@ -28,8 +32,9 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 })
-app.use('/api', limiter)
+// app.use('/api', limiter)
 app.use(express.json({ limit: '10mb' }))
+app.use(requestLogger)
 
 app.use('/api/messages', messagesRouter)
 app.use('/api/chests', chestsRouter)
@@ -38,25 +43,27 @@ app.use('/api/users', usersRouter)
 app.use('/api/seed', seedRouter)
 app.use('/api/map', mapRouter)
 app.use('/api/loot-items', lootItemsRouter)
+app.use('/api/ratings', ratingsRouter)
 
-app.get('/api/health', (_req, res) => {
-  try {
-    getDb().prepare('SELECT 1').get()
-    res.json({ status: 'ok', database: 'connected' })
-  } catch {
-    res.status(503).json({ status: 'error', database: 'disconnected' })
-  }
-})
+app.get('/api/health', healthController)
 
 runMigrations()
-// seedDatabase() // Creates mock data
+// seedDatabase() // Optional local mock data
 
-// Global error handler middleware
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('Unhandled error:', err)
-  res.status(500).json({ error: 'Internal server error' })
+app.use(errorHandler)
+
+const server = app.listen(PORT, () => {
+  logger.info('server_started', { port: PORT })
 })
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`)
-})
+function shutdown(signal: string): void {
+  logger.info('server_shutdown_started', { signal })
+  server.close(() => {
+    closeDb()
+    logger.info('server_shutdown_complete')
+    process.exit(0)
+  })
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'))
+process.on('SIGINT', () => shutdown('SIGINT'))

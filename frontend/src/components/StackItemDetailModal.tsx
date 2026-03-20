@@ -1,10 +1,13 @@
 import { motion } from "framer-motion";
 import { X, Award, Coins, MapPin, Package, Clock } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
+import { useRuntimeConfigStore } from "@/store/useRuntimeConfigStore";
 import { GameButton } from "@/components/GameButton";
 
 export function StackItemDetailModal() {
   const { selectedStackItem, setSelectedStackItem } = useAppStore();
+  const unlockDistance = useRuntimeConfigStore((s) => s.geo.UNLOCK_DISTANCE_M);
+  const penalty = useRuntimeConfigStore((s) => s.penalty);
   if (!selectedStackItem) return null;
 
   const item =
@@ -19,7 +22,7 @@ export function StackItemDetailModal() {
   if (!item) return null;
   const type = selectedStackItem.type;
   const dist = "distance" in item ? item.distance : 0;
-  const isUnlocked = dist != null && dist <= 20;
+  const isUnlocked = dist != null && dist <= unlockDistance;
   const date = new Date(item.createdAt).toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
@@ -102,7 +105,7 @@ export function StackItemDetailModal() {
                     Bonus Loot
                   </p>
                   <p className="text-[var(--color-text-primary)] font-bold text-sm">
-                    Contains 10 Coins & Rare Badge
+                    Contains {(item as { coinReward?: number }).coinReward ?? 10} Coins & Bonus Loot
                   </p>
                 </div>
               </div>
@@ -117,7 +120,7 @@ export function StackItemDetailModal() {
                   </p>
                   <p className="text-[var(--color-text-primary)] font-bold text-sm">
                     {"isPenalty" in item && item.isPenalty
-                      ? "Opens bombs/snakes drop XP & coins"
+                      ? `Penalty: -${penalty.xpDrop} XP, -${penalty.coinDrop} Coins`
                       : `+${item.xpReward} XP, +${item.coinReward} Coins`}
                   </p>
                 </div>

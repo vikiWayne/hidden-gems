@@ -3,6 +3,7 @@
  */
 import { randomUUID } from 'crypto'
 import { getDb } from '../connection.js'
+import { logger } from '../../lib/logger.js'
 
 export type DiscoveryItemType = 'chest' | 'loot'
 
@@ -33,6 +34,16 @@ export interface FoundLootItem {
   coinReward: number
   finderOrdinal: number
   foundAt: string
+}
+
+export interface FoundMessage {
+  id: string
+  itemId: string
+  type: string
+  content: string
+  foundAt: string
+  latitude: number
+  longitude: number
 }
 
 export function recordChestDiscovery(userId: string, chestId: string): { finderOrdinal: number } | null {
@@ -67,7 +78,7 @@ export function recordChestDiscovery(userId: string, chestId: string): { finderO
     return { finderOrdinal }
   } catch (err) {
     db.exec('ROLLBACK')
-    console.error('Error recording chest discovery:', err)
+    logger.error('record_chest_discovery_failed', { error: err instanceof Error ? err.message : String(err) })
     return null
   }
 }
@@ -95,7 +106,7 @@ export function recordMessageDiscovery(userId: string, messageId: string): boole
     return true
   } catch (err) {
     db.exec('ROLLBACK')
-    console.error('Error recording message discovery:', err)
+    logger.error('record_message_discovery_failed', { error: err instanceof Error ? err.message : String(err) })
     return false
   }
 }
@@ -117,7 +128,7 @@ export function getClaimedIds(userId: string): { chestIds: string[]; lootIds: st
   }
 }
 
-export function getFoundItemsByUser(userId: string): { chests: FoundChest[]; loot: FoundLootItem[]; messages: any[] } {
+export function getFoundItemsByUser(userId: string): { chests: FoundChest[]; loot: FoundLootItem[]; messages: FoundMessage[] } {
   const chestRows = getDb()
     .prepare(
       `SELECT d.id, d.item_id, d.finder_ordinal, d.found_at, c.content, c.xp_reward
@@ -168,7 +179,7 @@ export function getFoundItemsByUser(userId: string): { chests: FoundChest[]; loo
     foundAt: r.found_at,
   }))
 
-  const messages = messageRows.map((r) => ({
+  const messages: FoundMessage[] = messageRows.map((r) => ({
     id: r.id,
     itemId: r.message_id,
     type: r.type,

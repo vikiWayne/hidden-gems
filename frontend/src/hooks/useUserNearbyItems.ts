@@ -2,8 +2,8 @@ import { useEffect, useRef, useCallback } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { useGameStore } from "@/store/useGameStore";
 import { useUserStore } from "@/store/useUserStore";
+import { useRuntimeConfigStore } from "@/store/useRuntimeConfigStore";
 import { api } from "@/api/client";
-import { UNLOCK_DISTANCE_M, NEAR_DISTANCE_M, POLL_INTERVAL_MS } from "./useLocation";
 
 /**
  * Fetches items near the user's current position. Drives proximity, theme (chest hunter),
@@ -14,6 +14,7 @@ export function useUserNearbyItems() {
     useAppStore();
   const { setNearbyChests, setNearbyLootItems } = useGameStore();
   const { userId } = useUserStore();
+  const unlockDistance = useRuntimeConfigStore((s) => s.geo.UNLOCK_DISTANCE_M);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchNearby = useCallback(async () => {
@@ -26,7 +27,7 @@ export function useUserNearbyItems() {
         userId,
         filter: mapFilter,
       });
- // todo - check this items are already sorted by distance, if not sort them
+
       setNearbyMessages(messages);
       setNearbyChests(chests);
       setNearbyLootItems(lootItems);
@@ -44,10 +45,10 @@ export function useUserNearbyItems() {
         setProximityState("far");
       } else {
         const dist = closest.distance ?? Infinity;
-        if (dist <= UNLOCK_DISTANCE_M) {
+        if (dist <= unlockDistance) {
           setProximityState("unlocked");
           setSelectedMessage(closest);
-        } else if (dist <= NEAR_DISTANCE_M) {
+        } else if (dist <= unlockDistance * 2) {
           setProximityState("near");
           setSelectedMessage(closest);
         } else {
@@ -71,17 +72,18 @@ export function useUserNearbyItems() {
     setNearbyLootItems,
     setSelectedMessage,
     setProximityState,
+    unlockDistance,
   ]);
 
   useEffect(() => {
     if (!userLocation) return;
 
     fetchNearby();
-    intervalRef.current = setInterval(fetchNearby, POLL_INTERVAL_MS);
+    intervalRef.current = setInterval(fetchNearby, 10000);
 
     return () => {
       if (intervalRef.current) {
-        clearTimeout(intervalRef.current);
+        clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     };

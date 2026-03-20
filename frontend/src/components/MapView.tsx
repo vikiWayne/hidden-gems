@@ -5,7 +5,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { useGameStore } from "@/store/useGameStore";
 import { useViewportStore } from "@/store/useViewportStore";
 import { useResolvedTheme } from "@/store/useThemeStore";
-import { LOCKED_DISTANCE_M } from "@/hooks/useLocation";
+import { useRuntimeConfigStore } from "@/store/useRuntimeConfigStore";
 import { getThemeColors } from "@/config/theme";
 import { LOOT_ITEM_ICONS } from "@/config/mapItems";
 import type { ThemeKey } from "@/config/theme";
@@ -55,6 +55,7 @@ export function MapView() {
     setFlyToMarkerPosition,
   } = useAppStore();
   const { nearbyChests, nearbyLootItems, chestHunterMode, claimedChestIds } = useGameStore();
+  const unlockDistance = useRuntimeConfigStore((s) => s.geo.UNLOCK_DISTANCE_M);
   const {
     viewportBounds,
     viewportMessages,
@@ -192,7 +193,7 @@ export function MapView() {
       const isOwn = msg.isOwn === true;
       const isPrivate = msg.visibility === "private";
       const dist = msg.distance ?? Infinity;
-      const isBeyondLocked = dist > LOCKED_DISTANCE_M;
+      const isBeyondLocked = dist > unlockDistance * 5;
       const isUnlocked =
         proximityState === "unlocked" && selectedMessage?.id === msg.id;
       const isNear =
@@ -249,8 +250,8 @@ export function MapView() {
 
     mergedChests.forEach((chest) => {
       const dist = chest.distance ?? 0;
-      const isBeyondLocked = dist > LOCKED_DISTANCE_M;
-      const isClaimable = dist <= 20;
+      const isBeyondLocked = dist > unlockDistance * 5;
+      const isClaimable = dist <= unlockDistance;
       const isOwn = chest.isOwn === true;
       const isClaimed = claimedChestIds.includes(chest.id);
 
@@ -292,7 +293,7 @@ export function MapView() {
 
     mergedLootItems.forEach((loot) => {
       const dist = loot.distance ?? 0;
-      const isBeyondLocked = dist > LOCKED_DISTANCE_M;
+      const isBeyondLocked = dist > unlockDistance * 5;
       const iconConfig = LOOT_ITEM_ICONS[loot.type] ?? LOOT_ITEM_ICONS.diamond;
       const icon: MapMarkerConfig["icon"] = loot.type;
       add({
@@ -418,6 +419,7 @@ export function MapView() {
     selectedChestId,
     isMessageOpened,
     claimedChestIds,
+    unlockDistance,
   ]);
 
   return (

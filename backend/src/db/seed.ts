@@ -2,6 +2,7 @@
  * Seed initial data: India messages, mock users, mock leaderboard.
  */
 import { getDb } from './connection.js'
+import { logger } from '../lib/logger.js'
 
 const INDIA_SEED_MESSAGES: Array<{ lat: number; lng: number; content: string; markerColor?: string }> = [
   { lat: 28.6139, lng: 77.209, content: 'Best chai at this corner! Ask for masala.', markerColor: 'orange' },
@@ -74,7 +75,7 @@ export function seedDatabase(): void {
         now
       )
     })
-    console.log('[db] Seeded India messages')
+    logger.info('db_seeded_messages')
   }
 
   const userCount = db.prepare(`SELECT COUNT(*) as c FROM users`).get() as { c: number }
@@ -82,7 +83,7 @@ export function seedDatabase(): void {
     for (const u of MOCK_USERS) {
       db.prepare(`INSERT INTO users (id, username, created_at) VALUES (?, ?, ?)`).run(u.id, u.username, now)
     }
-    console.log('[db] Seeded mock users')
+    logger.info('db_seeded_users')
   }
 
   const leaderboardCount = db.prepare(`SELECT COUNT(*) as c FROM leaderboard`).get() as { c: number }
@@ -92,6 +93,6 @@ export function seedDatabase(): void {
         `INSERT INTO leaderboard (user_id, username, xp, discovered, chests_found, updated_at) VALUES (?, ?, ?, ?, ?, ?)`
       ).run(e.userId, e.username, e.xp, e.discovered, e.chestsFound, now)
     }
-    console.log('[db] Seeded leaderboard')
+    logger.info('db_seeded_leaderboard')
   }
 }

@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import type { NearbyChest, NearbyLootItem } from "@/api/client";
-
-const CHEST_HUNTER_RADIUS_M = 200;
+import { useRuntimeConfigStore } from "./useRuntimeConfigStore";
 
 interface GameState {
   nearbyChests: NearbyChest[];
@@ -20,12 +19,11 @@ export const useGameStore = create<GameState>((set) => ({
   claimedChestIds: [],
   setNearbyChests: (chests) =>
     set((state) => {
-      const filtered = chests;
+      const filtered = chests.filter((c) => !state.claimedChestIds?.includes(c.id));
+      const chestHunterRadius = useRuntimeConfigStore.getState().geo.CHEST_HUNTER_RADIUS_M;
       return {
         nearbyChests: chests,
-        chestHunterMode:
-          filtered.filter(c => !state.claimedChestIds?.includes(c.id)).length > 0 &&
-          (filtered.filter(c => !state.claimedChestIds?.includes(c.id))[0]?.distance ?? Infinity) <= CHEST_HUNTER_RADIUS_M,
+        chestHunterMode: filtered.length > 0 && (filtered[0]?.distance ?? Infinity) <= chestHunterRadius,
       };
     }),
   setNearbyLootItems: (items) => set({ nearbyLootItems: items }),

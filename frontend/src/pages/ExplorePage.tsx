@@ -3,6 +3,7 @@ import { useLocation } from "@/hooks/useLocation";
 import { useUserNearbyItems } from "@/hooks/useUserNearbyItems";
 import { useViewportMapItems } from "@/hooks/useViewportMapItems";
 import { useSeedNearby } from "@/hooks/useSeedNearby";
+import { useSyncMapConfig } from "@/hooks/useSyncMapConfig";
 import { useAppStore } from "@/store/useAppStore";
 import { useGameStore } from "@/store/useGameStore";
 import { MapView } from "@/components/MapView";
@@ -18,6 +19,7 @@ export function ExplorePage() {
   const { proximityState, isLocationLoading, locationError, mapFilter, setMapFilter } = useAppStore();
   const { chestHunterMode } = useGameStore();
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  useSyncMapConfig();
 
   // User-nearby: drives proximity, theme, nearby list (stable when panning)
   useUserNearbyItems();

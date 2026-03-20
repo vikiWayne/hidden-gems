@@ -1,6 +1,6 @@
-import { UNLOCK_DISTANCE_M } from "@/hooks/useLocation";
 import { useAppStore } from "@/store/useAppStore";
 import { useGameStore } from "@/store/useGameStore";
+import { useRuntimeConfigStore } from "@/store/useRuntimeConfigStore";
 import { motion } from "framer-motion";
 import { Gift, Lock, Mail, MapPin } from "lucide-react";
 import { useRef } from "react";
@@ -18,6 +18,7 @@ export function ProximityCard() {
     nearbyMessages,
   } = useAppStore();
   const { nearbyChests, chestHunterMode } = useGameStore();
+  const unlockDistance = useRuntimeConfigStore((s) => s.geo.UNLOCK_DISTANCE_M);
   const claimButtonRef = useRef<HTMLDivElement>(null);
 
   const hiddenCount = nearbyMessages.filter(
@@ -42,7 +43,7 @@ export function ProximityCard() {
 
   if (chestHunterMode && nearestChest && !selectedMessage) {
     const dist = Math.round(nearestChest.distance);
-    const isUnlocked = dist <= UNLOCK_DISTANCE_M;
+    const isUnlocked = dist <= unlockDistance;
 
     return (
       <ChestHunterCard

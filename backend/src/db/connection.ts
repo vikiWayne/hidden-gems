@@ -17,7 +17,7 @@ export function getDb(): Database.Database {
   if (!db) {
     const dir = path.dirname(DB_PATH)
     fs.mkdirSync(dir, { recursive: true })
-    db = new Database(DB_PATH, { verbose: process.env.NODE_ENV === 'development' ? console.log : undefined })
+    db = new Database(DB_PATH)
     db.pragma('journal_mode = WAL')
     db.pragma('foreign_keys = ON')
   }

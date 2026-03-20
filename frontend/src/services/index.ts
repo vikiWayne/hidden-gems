@@ -1,4 +1,5 @@
 export { useLeaderboardQuery } from "./leaderboardService";
+export { useMapConfigQuery } from "./mapConfigService";
 export { useSearchUsersQuery } from "./usersService";
 export { useCreateMessageMutation, useUpdateMessageMutation } from "./messagesService";
 export { useCreateChestMutation } from "./chestsService";

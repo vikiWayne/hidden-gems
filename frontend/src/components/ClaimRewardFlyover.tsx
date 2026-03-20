@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "@/store/useAppStore";
 import { useUserStore } from "@/store/useUserStore";
 import { useGameStore } from "@/store/useGameStore";
+import { useRuntimeConfigStore } from "@/store/useRuntimeConfigStore";
 import { api } from "@/api/client";
 import { Award } from "lucide-react";
 import { useEffect, useRef, useCallback, useState } from "react";
-import { UNLOCK_DISTANCE_M, NEAR_DISTANCE_M } from "@/hooks/useLocation";
 
 const ANIMATION_DURATION_MS = 1200;
 const COIN_COUNT = 8;
@@ -76,6 +76,7 @@ export function ClaimRewardFlyover() {
   } = useAppStore();
   const { addXp, addCoins, userId } = useUserStore();
   const { claimChest } = useGameStore();
+  const unlockDistance = useRuntimeConfigStore((s) => s.geo.UNLOCK_DISTANCE_M);
   const hasAppliedRef = useRef(false);
   const soundPlayedRef = useRef(false);
 
@@ -109,9 +110,9 @@ export function ClaimRewardFlyover() {
           setSelectedMessage(next);
           const dist = next.distance ?? Infinity;
           setProximityState(
-            dist <= UNLOCK_DISTANCE_M
+            dist <= unlockDistance
               ? "unlocked"
-              : dist <= NEAR_DISTANCE_M
+              : dist <= unlockDistance * 2
                 ? "near"
                 : "far"
           );
@@ -138,6 +139,7 @@ export function ClaimRewardFlyover() {
     setSelectedMessage,
     setSelectedChestId,
     setProximityState,
+    unlockDistance,
   ]);
 
   useEffect(() => {
