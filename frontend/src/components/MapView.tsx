@@ -54,7 +54,8 @@ export function MapView() {
     flyToMarkerPosition,
     setFlyToMarkerPosition,
   } = useAppStore();
-  const { nearbyChests, nearbyLootItems, chestHunterMode, claimedChestIds } = useGameStore();
+  const { nearbyChests, nearbyLootItems, chestHunterMode, claimedChestIds } =
+    useGameStore();
   const unlockDistance = useRuntimeConfigStore((s) => s.geo.UNLOCK_DISTANCE_M);
   const {
     viewportBounds,

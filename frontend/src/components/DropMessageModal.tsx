@@ -4,6 +4,8 @@ import { MentionInput } from "@/components/MentionInput";
 import { useAppStore } from "@/store/useAppStore";
 import { useMyTagsStore } from "@/store/useMyTagsStore";
 import { useUserStore } from "@/store/useUserStore";
+import { useAuth } from "@/contexts/AuthContext";
+import { AuthModal } from "@/components/AuthModal";
 import type { CreatedMessage, MarkerColor, MessageType } from "@/types";
 import { motion } from "framer-motion";
 import {
@@ -36,6 +38,7 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
   const { userLocation } = useAppStore();
   const { addMessage } = useMyTagsStore();
   const { userId } = useUserStore();
+  const { isAuthenticated } = useAuth();
   const createMessage = useCreateMessageMutation();
   const createChest = useCreateChestMutation();
 
@@ -49,6 +52,7 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
   const [category, setCategory] = useState("");
   const [markerColor, setMarkerColor] = useState<MarkerColor>("purple");
   const [error, setError] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const loading = createMessage.isPending || createChest.isPending;
   const [recording, setRecording] = useState(false);
@@ -168,6 +172,12 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
     e.preventDefault();
     if (!userLocation) return;
 
+    // Check authentication before proceeding
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
+
     if (dropType === "chest") {
       if (!content.trim()) return;
       setError(null);
@@ -186,9 +196,11 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
             onClose();
           },
           onError: (err) => {
-            setError(err instanceof Error ? err.message : "Failed to create chest");
+            setError(
+              err instanceof Error ? err.message : "Failed to create chest",
+            );
           },
-        }
+        },
       );
       return;
     }
@@ -232,7 +244,8 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
             id: message.id,
             type: messageType,
             content: payloadContent,
-            mediaUrl: messageType !== "text" ? (mediaData ?? undefined) : undefined,
+            mediaUrl:
+              messageType !== "text" ? (mediaData ?? undefined) : undefined,
             title,
             location: {
               latitude: userLocation.latitude,
@@ -240,7 +253,8 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
               altitude: userLocation.altitude,
             },
             visibility,
-            allowedUserIds: visibility === "private" ? allowedUserIds : undefined,
+            allowedUserIds:
+              visibility === "private" ? allowedUserIds : undefined,
             category: category.trim() || undefined,
             createdAt: new Date().toISOString(),
             markerColor,
@@ -250,9 +264,11 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
           onClose();
         },
         onError: (err) => {
-          setError(err instanceof Error ? err.message : "Failed to create message");
+          setError(
+            err instanceof Error ? err.message : "Failed to create message",
+          );
         },
-      }
+      },
     );
   };
 
@@ -267,12 +283,12 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
     dropType === "chest"
       ? content.trim().length > 0
       : (messageType === "text" &&
-        content.trim() &&
-        (visibility !== "private" || allowedUserIds.length > 0)) ||
-      ((messageType === "voice" ||
-        messageType === "image" ||
-        messageType === "video") &&
-        mediaData);
+          content.trim() &&
+          (visibility !== "private" || allowedUserIds.length > 0)) ||
+        ((messageType === "voice" ||
+          messageType === "image" ||
+          messageType === "video") &&
+          mediaData);
 
   return (
     <div
@@ -337,9 +353,10 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
                   onClick={() => setDropType(t.id as any)}
                   className={`
                     flex items-center justify-center gap-2 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all
-                    ${dropType === t.id
-                      ? `${t.activeColor} text-white translate-y-[-2px]`
-                      : "bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] border-2 border-[var(--color-border)] active:translate-y-0.5"
+                    ${
+                      dropType === t.id
+                        ? `${t.activeColor} text-white translate-y-[-2px]`
+                        : "bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] border-2 border-[var(--color-border)] active:translate-y-0.5"
                     }
                   `}
                 >
@@ -393,9 +410,10 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
                       }}
                       className={`
                         flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 transition-all
-                        ${messageType === t.id
-                          ? "bg-[var(--color-game-purple)] text-white border-transparent shadow-[0_4px_0_var(--color-game-purple-dark)] translate-y-[-2px]"
-                          : "bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] border-[var(--color-border)] active:translate-y-0.5"
+                        ${
+                          messageType === t.id
+                            ? "bg-[var(--color-game-purple)] text-white border-transparent shadow-[0_4px_0_var(--color-game-purple-dark)] translate-y-[-2px]"
+                            : "bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] border-[var(--color-border)] active:translate-y-0.5"
                         }
                       `}
                     >
@@ -543,10 +561,11 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
                       key={c}
                       type="button"
                       onClick={() => setMarkerColor(c)}
-                      className={`w-9 h-9 rounded-xl border-2 transition-all ${markerColor === c
+                      className={`w-9 h-9 rounded-xl border-2 transition-all ${
+                        markerColor === c
                           ? "border-[var(--color-text-primary)] scale-110 shadow-lg"
                           : "border-[var(--color-border)] hover:scale-105"
-                        }`}
+                      }`}
                       style={{
                         backgroundColor:
                           c === "purple"
@@ -636,6 +655,12 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
           </GameButton>
         </div>
       </motion.div>
+      {showAuthModal && (
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+        />
+      )}
     </div>
   );
 }

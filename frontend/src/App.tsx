@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
-import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppLayout } from "@/layouts/AppLayout";
 import { ExplorePage } from "@/pages/ExplorePage";
@@ -10,6 +17,8 @@ import { DropMessageModal } from "@/components/DropMessageModal";
 import { SettingsModal } from "@/components/SettingsModal";
 import { StackItemDetailModal } from "@/components/StackItemDetailModal";
 import { ClaimRewardFlyover } from "@/components/ClaimRewardFlyover";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { useResolvedTheme } from "@/store/useThemeStore";
 import { useGameStore } from "@/store/useGameStore";
 import { injectTheme, type ThemeKey } from "@/config/theme";
@@ -23,7 +32,9 @@ function AppContent() {
   const resolvedTheme = useResolvedTheme();
   const { chestHunterMode } = useGameStore();
 
-  const currentTheme: ThemeKey = chestHunterMode ? "chest-hunter" : resolvedTheme;
+  const currentTheme: ThemeKey = chestHunterMode
+    ? "chest-hunter"
+    : resolvedTheme;
   const activeTab: TabType = TAB_FROM_PATH[location.pathname] ?? "explore";
 
   const setActiveTab = (tab: TabType) => {
@@ -60,8 +71,26 @@ function AppContent() {
         >
           <Routes>
             <Route path="/explore" element={<ExplorePage />} />
-            <Route path="/my-collection" element={<MyCollectionPage />} />
-            <Route path="/mytags" element={<Navigate to="/my-collection" replace />} />
+            <Route
+              path="/my-collection"
+              element={
+                <ProtectedRoute>
+                  <MyCollectionPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-tags"
+              element={
+                <ProtectedRoute>
+                  <MyCollectionPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mytags"
+              element={<Navigate to="/my-tags" replace />}
+            />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
           </Routes>
         </AppLayout>
@@ -73,10 +102,12 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/explore" replace />} />
-        <Route path="/*" element={<AppContent />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Navigate to="/explore" replace />} />
+          <Route path="/*" element={<AppContent />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

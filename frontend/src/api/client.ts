@@ -34,7 +34,9 @@ export type {
   SearchUser,
 } from "./types/responses";
 
-function buildQuery(params: Record<string, string | number | undefined>): string {
+function buildQuery(
+  params: Record<string, string | number | undefined>,
+): string {
   const search = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) {
     if (v != null && v !== "") search.set(k, String(v));
@@ -51,7 +53,7 @@ export const api = {
         lng: params.lng,
         alt: params.alt,
         userId: params.userId,
-      })}`
+      })}`,
     );
     return getNearbyMessagesResponseSchema.parse(data);
   },
@@ -67,7 +69,7 @@ export const api = {
         lat: params.lat,
         lng: params.lng,
         userId: params.userId,
-      })}`
+      })}`,
     );
     return data as { message: unknown; unlocked: boolean };
   },
@@ -78,7 +80,7 @@ export const api = {
         lat: params.lat,
         lng: params.lng,
         userId: params.userId,
-      })}`
+      })}`,
     );
     return getNearbyChestsResponseSchema.parse(data);
   },
@@ -117,7 +119,9 @@ export const api = {
   },
 
   getMyItems: async (userId: string) => {
-    const { data } = await apiClient.get(`/users/me/items${buildQuery({ userId })}`);
+    const { data } = await apiClient.get(
+      `/users/me/items${buildQuery({ userId })}`,
+    );
     return data as GetMyItemsResponse;
   },
 
@@ -126,7 +130,7 @@ export const api = {
       `/users/search${buildQuery({
         q: params.q,
         limit: params.limit ?? 5,
-      })}`
+      })}`,
     );
     return searchUsersResponseSchema.parse(data);
   },
@@ -138,7 +142,7 @@ export const api = {
         lng: params.lng,
         userId: params.userId,
         filter: params.filter,
-      })}`
+      })}`,
     );
     return getMapViewportResponseSchema.parse(data);
   },
@@ -154,7 +158,7 @@ export const api = {
         userLat: params.userLat,
         userLng: params.userLng,
         filter: params.filter,
-      })}`
+      })}`,
     );
     return getMapViewportResponseSchema.parse(data);
   },
@@ -163,8 +167,59 @@ export const api = {
     const { data } = await apiClient.get("/map/config");
     return data as {
       penalty: { xpDrop: number; coinDrop: number };
-      lootItems: Record<string, { label: string; icon: string; xpReward: number; coinReward: number; isPenalty: boolean }>;
-      geo: { NEARBY_RADIUS_M: number; UNLOCK_DISTANCE_M: number; CHEST_HUNTER_RADIUS_M: number };
+      lootItems: Record<
+        string,
+        {
+          label: string;
+          icon: string;
+          xpReward: number;
+          coinReward: number;
+          isPenalty: boolean;
+        }
+      >;
+      geo: {
+        NEARBY_RADIUS_M: number;
+        UNLOCK_DISTANCE_M: number;
+        CHEST_HUNTER_RADIUS_M: number;
+      };
     };
+  },
+
+  // Auth API methods
+  register: async (username: string, password: string, fullName: string) => {
+    const { data } = await apiClient.post("/auth/register", {
+      username,
+      password,
+      fullName,
+    });
+    return data as {
+      userId: string;
+      token: string;
+      user: { userId: string; username: string; fullName: string };
+    };
+  },
+
+  login: async (username: string, password: string) => {
+    const { data } = await apiClient.post("/auth/login", {
+      username,
+      password,
+    });
+    return data as {
+      userId: string;
+      token: string;
+      user: { userId: string; username: string; fullName: string };
+    };
+  },
+
+  getCurrentUser: async () => {
+    const { data } = await apiClient.get("/auth/me");
+    return data as { userId: string; username: string; fullName: string };
+  },
+
+  checkUsernameAvailable: async (username: string) => {
+    const { data } = await apiClient.get(
+      `/auth/check-username?username=${encodeURIComponent(username)}`,
+    );
+    return data as { available: boolean };
   },
 };

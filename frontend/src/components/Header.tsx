@@ -1,7 +1,8 @@
-import { Settings, Award, Coins } from "lucide-react";
+import { Settings, Award, Coins, LogOut } from "lucide-react";
 import { useGameStore } from "@/store/useGameStore";
 import { useAppStore } from "@/store/useAppStore";
 import { useUserStore } from "@/store/useUserStore";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import type { TabType } from "@/routes";
 
@@ -18,6 +19,7 @@ export function Header({ onSettingsClick }: HeaderProps) {
   const { chestHunterMode } = useGameStore();
   const { xp, coins } = useUserStore();
   const { triggerClaimAnimation } = useAppStore();
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 bg-[var(--color-bg-primary)] border-b border-[var(--color-border)] px-4 py-3">
@@ -66,6 +68,16 @@ export function Header({ onSettingsClick }: HeaderProps) {
           >
             Test XP
           </button>
+
+          {isAuthenticated && (
+            <button
+              onClick={logout}
+              className="p-2 rounded-xl hover:bg-[var(--color-bg-secondary)] border-2 border-transparent transition-all active:translate-y-0.5"
+              title="Logout"
+            >
+              <LogOut className="w-6 h-6 text-[var(--color-text-muted)]" />
+            </button>
+          )}
 
           <button
             onClick={onSettingsClick}
@@ -122,9 +134,10 @@ export function TabNav({ activeTab, onTabChange }: TabNavProps) {
                 onClick={() => onTabChange(tab.id)}
                 className={`
                   flex-1 min-w-[100px] px-4 py-2 rounded-xl text-sm font-black uppercase tracking-wider transition-all
-                  ${isActive
-                    ? `${activeColor} text-white ${shadowColor} translate-y-[-2px]`
-                    : "text-[var(--color-text-muted)] hover:bg-[var(--color-bg-secondary)] active:translate-y-0.5"
+                  ${
+                    isActive
+                      ? `${activeColor} text-white ${shadowColor} translate-y-[-2px]`
+                      : "text-[var(--color-text-muted)] hover:bg-[var(--color-bg-secondary)] active:translate-y-0.5"
                   }
                 `}
               >
