@@ -11,12 +11,9 @@ function generateId() {
 }
 
 interface UserState {
-  userId: string;
-  username: string;
   friends: Friend[];
   xp: number;
   coins: number;
-  setUsername: (name: string) => void;
   addFriend: (friend: Friend) => void;
   removeFriend: (id: string) => void;
   getFriendsForMention: (query: string) => Friend[];
@@ -36,7 +33,6 @@ export const useUserStore = create<UserState>()(
       ],
       xp: 0,
       coins: 0,
-      setUsername: (username) => set({ username }),
       addFriend: (friend) =>
         set((s) => ({
           friends: s.friends.some((f) => f.id === friend.id)

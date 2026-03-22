@@ -14,6 +14,7 @@ export interface AuthUser {
 
 interface AuthState {
   // State
+  userId: string | null;
   user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
@@ -29,32 +30,29 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
+      userId: null,
       user: null,
       token: null,
       isAuthenticated: false,
       isLoading: false,
 
-      setUser: (user) =>
+      setUser: (user) => {
         set({
           user,
           isAuthenticated: !!user,
-        }),
+          userId: user?.userId || null,
+        });
+      },
+      setToken: (token) => set({ token }),
 
-      setToken: (token) =>
-        set({
-          token,
-        }),
-
-      setIsLoading: (loading) =>
-        set({
-          isLoading: loading,
-        }),
+      setIsLoading: (loading) => set({ isLoading: loading }),
 
       logout: () =>
         set({
           user: null,
           token: null,
           isAuthenticated: false,
+          userId: null,
         }),
     }),
     {
@@ -62,6 +60,7 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         user: state.user,
         token: state.token,
+        userId: state.userId,
       }), // Only persist user and token
     },
   ),

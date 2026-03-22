@@ -1,24 +1,29 @@
-import { useEffect, useRef, useCallback } from "react";
-import { useAppStore } from "@/store/useAppStore";
-import { useGameStore } from "@/store/useGameStore";
-import { useUserStore } from "@/store/useUserStore";
-import { useRuntimeConfigStore } from "@/store/useRuntimeConfigStore";
 import { api } from "@/api/client";
+import { useAppStore } from "@/store/useAppStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useGameStore } from "@/store/useGameStore";
+import { useRuntimeConfigStore } from "@/store/useRuntimeConfigStore";
+import { useCallback, useEffect, useRef } from "react";
 
 /**
  * Fetches items near the user's current position. Drives proximity, theme (chest hunter),
  * and nearby list. UI stays stable when user pans the map - only user location changes update this.
  */
 export function useUserNearbyItems() {
-  const { userLocation, setNearbyMessages, setSelectedMessage, setProximityState, mapFilter } =
-    useAppStore();
+  const {
+    userLocation,
+    setNearbyMessages,
+    setSelectedMessage,
+    setProximityState,
+    mapFilter,
+  } = useAppStore();
   const { setNearbyChests, setNearbyLootItems } = useGameStore();
-  const { userId } = useUserStore();
+  const { userId } = useAuthStore();
   const unlockDistance = useRuntimeConfigStore((s) => s.geo.UNLOCK_DISTANCE_M);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchNearby = useCallback(async () => {
-    if (!userLocation) return;
+    if (!userLocation || !userId) return;
 
     try {
       const { messages, chests, lootItems } = await api.getMapNearby({
@@ -35,7 +40,9 @@ export function useUserNearbyItems() {
       const store = useAppStore.getState();
 
       const unclaimedMessages = messages.filter(
-        (m) => !store.claimedMessageIds.includes(m.id) && !store.openedMessageIds.includes(m.id)
+        (m) =>
+          !store.claimedMessageIds.includes(m.id) &&
+          !store.openedMessageIds.includes(m.id),
       );
 
       // find the overall closest across unclaimed messages

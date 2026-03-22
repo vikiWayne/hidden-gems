@@ -4,14 +4,13 @@ import { useRuntimeConfigStore } from "@/store/useRuntimeConfigStore";
 
 export function useSyncMapConfig() {
   const { data } = useMapConfigQuery();
-  const setMapConfig = useRuntimeConfigStore((s) => s.setMapConfig);
+  const setMapConfig = useRuntimeConfigStore((s) => s.setMapConfig); // what is it ?
 
   useEffect(() => {
-    if (!data) return;
+    if (!data?.data) return;
     setMapConfig({
-      geo: data.geo,
-      penalty: data.penalty,
+      geo: data?.data.geo,
+      penalty: data?.data.penalty,
     });
   }, [data, setMapConfig]);
 }
-

@@ -1,9 +1,9 @@
-import { useEffect, useRef, useCallback } from "react";
-import { useViewportStore } from "@/store/useViewportStore";
-import { useUserStore } from "@/store/useUserStore";
 import { api } from "@/api/client";
+import { useViewportStore } from "@/store/useViewportStore";
+import { useCallback, useEffect, useRef } from "react";
 
 import { useAppStore } from "@/store/useAppStore";
+import { useAuthStore } from "@/store/useAuthStore";
 
 /** Padding factor to expand viewport when fetching (1.2 = 20% extra) */
 const VIEWPORT_PADDING = 1.2;
@@ -16,7 +16,7 @@ function expandBounds(
   maxLat: number,
   minLng: number,
   maxLng: number,
-  padding: number
+  padding: number,
 ): { minLat: number; maxLat: number; minLng: number; maxLng: number } {
   const latSpan = (maxLat - minLat) * (padding - 1) * 0.5;
   const lngSpan = (maxLng - minLng) * (padding - 1) * 0.5;
@@ -35,12 +35,12 @@ function expandBounds(
 export function useViewportMapItems() {
   const { viewportBounds, setViewportData, setViewportLoading } =
     useViewportStore();
-  const { userId } = useUserStore();
+  const { userId } = useAuthStore();
   const mapFilter = useAppStore((s) => s.mapFilter);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchViewport = useCallback(async () => {
-    if (!viewportBounds) return;
+    if (!viewportBounds || !userId) return;
 
     setViewportLoading(true);
     try {
@@ -49,7 +49,7 @@ export function useViewportMapItems() {
         viewportBounds.maxLat,
         viewportBounds.minLng,
         viewportBounds.maxLng,
-        VIEWPORT_PADDING
+        VIEWPORT_PADDING,
       );
 
       const { messages, chests, lootItems } = await api.getMapViewport({

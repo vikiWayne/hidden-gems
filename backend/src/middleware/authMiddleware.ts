@@ -4,6 +4,8 @@
  */
 import { Request, Response, NextFunction } from "express";
 import { authService } from "../services/auth.service.js";
+import { AppError } from "../lib/errors.js";
+import { getErrorMessage } from "../config/errorMessages.js";
 
 export interface AuthenticatedRequest extends Request {
   userId?: string;
@@ -29,7 +31,7 @@ export const authenticateToken = (
   const token = authHeader && authHeader.split(" ")[1]; // Extract token from "Bearer TOKEN"
 
   if (!token) {
-    return res.status(401).json({ error: "No token provided" });
+    throw new AppError(getErrorMessage("AUTH_NO_TOKEN"), 401, "AUTH_NO_TOKEN");
   }
 
   try {
@@ -38,7 +40,11 @@ export const authenticateToken = (
     req.user = user;
     next();
   } catch (err) {
-    return res.status(401).json({ error: "Invalid or expired token" });
+    throw new AppError(
+      getErrorMessage("AUTH_INVALID_TOKEN"),
+      401,
+      "AUTH_INVALID_TOKEN",
+    );
   }
 };
 

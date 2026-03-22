@@ -4,10 +4,21 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api/client";
-import type { CreateMessageRequest, UpdateMessageRequest } from "@/api/types/requests";
+import type {
+  CreateMessageRequest,
+  UpdateMessageRequest,
+} from "@/api/types/requests";
 import type { NearbyMessage } from "@/types";
-import { prependItem, replaceById, rollbackSnapshot, snapshotQueries } from "./optimisticUtils";
-import type { GetMapViewportResponse, GetMyItemsResponse } from "@/api/types/responses";
+import {
+  prependItem,
+  replaceById,
+  rollbackSnapshot,
+  snapshotQueries,
+} from "./optimisticUtils";
+import type {
+  GetMapViewportResponse,
+  GetMyItemsResponse,
+} from "@/api/types/responses";
 
 export function useCreateMessageMutation() {
   const queryClient = useQueryClient();
@@ -46,10 +57,10 @@ export function useCreateMessageMutation() {
         (prev: GetMapViewportResponse | undefined) =>
           prev
             ? {
-              ...prev,
-              messages: prependItem(prev.messages, optimisticMessage),
-            }
-            : prev
+                ...prev,
+                messages: prependItem(prev.messages, optimisticMessage),
+              }
+            : prev,
       );
 
       queryClient.setQueriesData(
@@ -57,24 +68,24 @@ export function useCreateMessageMutation() {
         (prev: GetMyItemsResponse | undefined) =>
           prev
             ? {
-              ...prev,
-              createdMessages: prependItem(prev.createdMessages, {
-                id: tempId,
-                type: optimisticMessage.type ?? "text",
-                content: optimisticMessage.content,
-                mediaUrl: optimisticMessage.mediaUrl,
-                latitude: optimisticMessage.location.latitude,
-                longitude: optimisticMessage.location.longitude,
-                altitude: optimisticMessage.location.altitude,
-                visibility: optimisticMessage.visibility,
-                allowedUserIds: optimisticMessage.allowedUserIds ?? [],
-                category: optimisticMessage.category,
-                markerColor: optimisticMessage.markerColor,
-                createdBy: optimisticMessage.createdBy,
-                createdAt: optimisticMessage.createdAt,
-              }),
-            }
-            : prev
+                ...prev,
+                createdMessages: prependItem(prev.createdMessages, {
+                  id: tempId,
+                  type: optimisticMessage.type ?? "text",
+                  content: optimisticMessage.content,
+                  mediaUrl: optimisticMessage.mediaUrl,
+                  latitude: optimisticMessage.location.latitude,
+                  longitude: optimisticMessage.location.longitude,
+                  altitude: optimisticMessage.location.altitude,
+                  visibility: optimisticMessage.visibility,
+                  allowedUserIds: optimisticMessage.allowedUserIds ?? [],
+                  category: optimisticMessage.category,
+                  markerColor: optimisticMessage.markerColor,
+                  createdBy: optimisticMessage.createdBy,
+                  createdAt: optimisticMessage.createdAt,
+                }),
+              }
+            : prev,
       );
 
       return { snapshot };
@@ -107,18 +118,19 @@ export function useUpdateMessageMutation() {
         (prev: GetMapViewportResponse | undefined) =>
           prev
             ? {
-              ...prev,
-              messages:
-                replaceById(prev.messages, id, (message) => ({
-                  ...message,
-                  content: data.content ?? message.content,
-                  visibility: data.visibility ?? message.visibility,
-                  allowedUserIds: data.allowedUserIds ?? message.allowedUserIds,
-                  category: data.category ?? message.category,
-                  markerColor: data.markerColor ?? message.markerColor,
-                })) ?? prev.messages,
-            }
-            : prev
+                ...prev,
+                messages:
+                  replaceById(prev.messages, id, (message) => ({
+                    ...message,
+                    content: data.content ?? message.content,
+                    visibility: data.visibility ?? message.visibility,
+                    allowedUserIds:
+                      data.allowedUserIds ?? message.allowedUserIds,
+                    category: data.category ?? message.category,
+                    markerColor: data.markerColor ?? message.markerColor,
+                  })) ?? prev.messages,
+              }
+            : prev,
       );
 
       queryClient.setQueriesData(
@@ -126,18 +138,19 @@ export function useUpdateMessageMutation() {
         (prev: GetMyItemsResponse | undefined) =>
           prev
             ? {
-              ...prev,
-              createdMessages:
-                replaceById(prev.createdMessages, id, (message) => ({
-                  ...message,
-                  content: data.content ?? message.content,
-                  visibility: data.visibility ?? message.visibility,
-                  allowedUserIds: data.allowedUserIds ?? message.allowedUserIds,
-                  category: data.category ?? message.category,
-                  markerColor: data.markerColor ?? message.markerColor,
-                })) ?? prev.createdMessages,
-            }
-            : prev
+                ...prev,
+                createdMessages:
+                  replaceById(prev.createdMessages, id, (message) => ({
+                    ...message,
+                    content: data.content ?? message.content,
+                    visibility: data.visibility ?? message.visibility,
+                    allowedUserIds:
+                      data.allowedUserIds ?? message.allowedUserIds,
+                    category: data.category ?? message.category,
+                    markerColor: data.markerColor ?? message.markerColor,
+                  })) ?? prev.createdMessages,
+              }
+            : prev,
       );
 
       return { snapshot };

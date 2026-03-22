@@ -1,7 +1,14 @@
-export { useLeaderboardQuery } from "./leaderboardService";
+export { useGetLeaderboard } from "./leaderboardService";
 export { useMapConfigQuery } from "./mapConfigService";
 export { useSearchUsersQuery } from "./usersService";
-export { useCreateMessageMutation, useUpdateMessageMutation } from "./messagesService";
+export {
+  useCreateMessageMutation,
+  useUpdateMessageMutation,
+} from "./messagesService";
 export { useCreateChestMutation } from "./chestsService";
-export { useMyItemsQuery, useDeleteMessageMutation, useDeleteChestMutation } from "./myItemsService";
+export {
+  useMyItemsQuery,
+  useDeleteMessageMutation,
+  useDeleteChestMutation,
+} from "./myItemsService";
 export { queryKeys } from "./queryKeys";

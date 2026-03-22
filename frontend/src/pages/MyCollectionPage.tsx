@@ -1,39 +1,39 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import type {
+  CreatedChestItem,
+  CreatedMessageItem,
+  FoundChestItem,
+  FoundLootItem,
+  FoundMessageItem,
+} from "@/api/types/responses";
+import { GameButton } from "@/components/GameButton";
+import { MentionInput } from "@/components/MentionInput";
+import { MiniMap } from "@/components/MiniMap";
+import { gameColors, markerColors } from "@/config/theme";
+import {
+  useDeleteChestMutation,
+  useDeleteMessageMutation,
+  useMyItemsQuery,
+  useUpdateMessageMutation,
+} from "@/services";
+import { useAuthStore } from "@/store/useAuthStore";
+import type { MarkerColor } from "@/types";
+import { AnimatePresence, motion } from "framer-motion";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
   ChevronDown,
   Copy,
+  Gift,
   MapPin,
-  Pencil,
-  Trash2,
-  X,
   MessageSquare,
   Package,
+  Pencil,
+  Trash2,
   Trophy,
-  Gift,
+  X,
 } from "lucide-react";
-import { MiniMap } from "@/components/MiniMap";
-import { MentionInput } from "@/components/MentionInput";
-import { GameButton } from "@/components/GameButton";
-import { gameColors, markerColors } from "@/config/theme";
-import {
-  useMyItemsQuery,
-  useUpdateMessageMutation,
-  useDeleteMessageMutation,
-  useDeleteChestMutation,
-} from "@/services";
-import { useUserStore } from "@/store/useUserStore";
-import type {
-  CreatedMessageItem,
-  CreatedChestItem,
-  FoundChestItem,
-  FoundLootItem,
-  FoundMessageItem,
-} from "@/api/types/responses";
-import type { MarkerColor } from "@/types";
+import { useEffect, useState } from "react";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 
 function createTagIcon(color: string) {
   return L.divIcon({
@@ -105,16 +105,27 @@ function getItemPreview(item: CollectionItem): string {
   switch (item.kind) {
     case "created-message":
     case "found-message":
-      return item.data.content.slice(0, 60) + (item.data.content.length > 60 ? "…" : "");
+      return (
+        item.data.content.slice(0, 60) +
+        (item.data.content.length > 60 ? "…" : "")
+      );
     case "created-chest":
     case "found-chest":
-      return item.data.content.slice(0, 60) + (item.data.content.length > 60 ? "…" : "");
+      return (
+        item.data.content.slice(0, 60) +
+        (item.data.content.length > 60 ? "…" : "")
+      );
     case "found-loot":
-      return item.data.content.slice(0, 60) + (item.data.content.length > 60 ? "…" : "");
+      return (
+        item.data.content.slice(0, 60) +
+        (item.data.content.length > 60 ? "…" : "")
+      );
   }
 }
 
-function getItemLocation(item: CollectionItem): { latitude: number; longitude: number } | null {
+function getItemLocation(
+  item: CollectionItem,
+): { latitude: number; longitude: number } | null {
   switch (item.kind) {
     case "created-message":
     case "found-message":
@@ -141,7 +152,8 @@ function ItemDetailModal({
 }) {
   const loc = getItemLocation(item);
   const isFirstFinder =
-    (item.kind === "found-chest" || item.kind === "found-loot") && item.data.finderOrdinal === 1;
+    (item.kind === "found-chest" || item.kind === "found-loot") &&
+    item.data.finderOrdinal === 1;
 
   return (
     <div
@@ -156,7 +168,9 @@ function ItemDetailModal({
         className="w-full max-w-md rounded-[var(--radius-game)] bg-[var(--color-bg-primary)] border-4 border-[var(--color-border)] shadow-2xl overflow-hidden"
       >
         <div className="flex items-center justify-between p-4 border-b-2 border-[var(--color-border)]">
-          <h2 className="text-xl font-black uppercase tracking-tight">{getItemLabel(item)}</h2>
+          <h2 className="text-xl font-black uppercase tracking-tight">
+            {getItemLabel(item)}
+          </h2>
           <button
             onClick={onClose}
             className="p-2 rounded-xl hover:bg-[var(--color-bg-secondary)] border-2 border-transparent hover:border-[var(--color-border)] transition-all"
@@ -184,20 +198,27 @@ function ItemDetailModal({
                     : item.data.content}
             </p>
           </div>
-          {(item.kind === "found-chest" || item.kind === "found-loot" || item.kind === "found-message") && (
+          {(item.kind === "found-chest" ||
+            item.kind === "found-loot" ||
+            item.kind === "found-message") && (
             <p className="text-[var(--color-text-muted)] text-sm font-bold">
-              Found {new Date(item.data.foundAt).toLocaleString(undefined, {
+              Found{" "}
+              {new Date(item.data.foundAt).toLocaleString(undefined, {
                 dateStyle: "medium",
                 timeStyle: "short",
               })}
               {"finderOrdinal" in item.data && item.data.finderOrdinal > 1 && (
-                <span className="ml-1">(#{item.data.finderOrdinal} to find)</span>
+                <span className="ml-1">
+                  (#{item.data.finderOrdinal} to find)
+                </span>
               )}
             </p>
           )}
-          {(item.kind === "created-message" || item.kind === "created-chest") && (
+          {(item.kind === "created-message" ||
+            item.kind === "created-chest") && (
             <p className="text-[var(--color-text-muted)] text-sm font-bold">
-              Created {new Date(item.data.createdAt).toLocaleString(undefined, {
+              Created{" "}
+              {new Date(item.data.createdAt).toLocaleString(undefined, {
                 dateStyle: "medium",
                 timeStyle: "short",
               })}
@@ -222,20 +243,32 @@ function ItemDetailModal({
                 : ""}
             </p>
           )}
-          {isCreator && (item.kind === "created-message" || item.kind === "created-chest") && (
-            <div className="flex gap-3 pt-2">
-              {onEdit && item.kind === "created-message" && (
-                <GameButton type="button" color="purple" onClick={onEdit} className="flex-1">
-                  Edit
-                </GameButton>
-              )}
-              {onDelete && (
-                <GameButton type="button" color="red" onClick={onDelete} className="flex-1">
-                  Delete
-                </GameButton>
-              )}
-            </div>
-          )}
+          {isCreator &&
+            (item.kind === "created-message" ||
+              item.kind === "created-chest") && (
+              <div className="flex gap-3 pt-2">
+                {onEdit && item.kind === "created-message" && (
+                  <GameButton
+                    type="button"
+                    color="purple"
+                    onClick={onEdit}
+                    className="flex-1"
+                  >
+                    Edit
+                  </GameButton>
+                )}
+                {onDelete && (
+                  <GameButton
+                    type="button"
+                    color="red"
+                    onClick={onDelete}
+                    className="flex-1"
+                  >
+                    Delete
+                  </GameButton>
+                )}
+              </div>
+            )}
         </div>
       </motion.div>
     </div>
@@ -252,11 +285,15 @@ function EditMessageModal({
   onSaved: () => void;
 }) {
   const [content, setContent] = useState(msg.content);
-  const [allowedUserIds, setAllowedUserIds] = useState<string[]>(msg.allowedUserIds ?? []);
-  const [visibility, setVisibility] = useState<"public" | "private">(msg.visibility);
+  const [allowedUserIds, setAllowedUserIds] = useState<string[]>(
+    msg.allowedUserIds ?? [],
+  );
+  const [visibility, setVisibility] = useState<"public" | "private">(
+    msg.visibility,
+  );
   const [category, setCategory] = useState(msg.category ?? "");
   const [markerColor, setMarkerColor] = useState<MarkerColor>(
-    (msg.markerColor as MarkerColor) ?? "purple"
+    (msg.markerColor as MarkerColor) ?? "purple",
   );
   const [error, setError] = useState<string | null>(null);
   const updateMessageMutation = useUpdateMessageMutation();
@@ -264,7 +301,9 @@ function EditMessageModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (visibility === "private" && allowedUserIds.length === 0) {
-      setError("Private messages must tag at least one user. Type @ to add friends.");
+      setError(
+        "Private messages must tag at least one user. Type @ to add friends.",
+      );
       return;
     }
     setError(null);
@@ -285,14 +324,25 @@ function EditMessageModal({
           onClose();
         },
         onError: (err) => {
-          setError(err instanceof Error ? err.message : "Failed to update message");
+          setError(
+            err instanceof Error ? err.message : "Failed to update message",
+          );
         },
-      }
+      },
     );
   };
 
   const loading = updateMessageMutation.isPending;
-  const colors: MarkerColor[] = ["purple", "orange", "green", "gold", "teal", "blue", "red", "pink"];
+  const colors: MarkerColor[] = [
+    "purple",
+    "orange",
+    "green",
+    "gold",
+    "teal",
+    "blue",
+    "red",
+    "pink",
+  ];
 
   return (
     <div
@@ -307,7 +357,9 @@ function EditMessageModal({
         className="w-full max-w-md rounded-[var(--radius-game)] bg-[var(--color-bg-primary)] border-4 border-[var(--color-border)] shadow-2xl overflow-hidden"
       >
         <div className="flex items-center justify-between p-4 border-b-2 border-[var(--color-border)]">
-          <h2 className="text-xl font-black uppercase tracking-tight">Edit Message</h2>
+          <h2 className="text-xl font-black uppercase tracking-tight">
+            Edit Message
+          </h2>
           <button
             onClick={onClose}
             className="p-2 rounded-xl hover:bg-[var(--color-bg-secondary)] border-2 border-transparent hover:border-[var(--color-border)] transition-all"
@@ -350,11 +402,15 @@ function EditMessageModal({
                   key={c}
                   type="button"
                   onClick={() => setMarkerColor(c)}
-                  className={`w-8 h-8 rounded-full border-2 transition-all ${markerColor === c
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${
+                    markerColor === c
                       ? "border-white ring-2 ring-[var(--color-game-purple)]"
                       : "border-[var(--color-border)]"
-                    }`}
-                  style={{ backgroundColor: markerColors[c as keyof typeof markerColors] ?? c }}
+                  }`}
+                  style={{
+                    backgroundColor:
+                      markerColors[c as keyof typeof markerColors] ?? c,
+                  }}
                 />
               ))}
             </div>
@@ -370,10 +426,11 @@ function EditMessageModal({
                   key={v}
                   type="button"
                   onClick={() => setVisibility(v)}
-                  className={`py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all border-4 ${visibility === v
+                  className={`py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all border-4 ${
+                    visibility === v
                       ? "bg-[var(--color-game-purple)] text-white border-transparent shadow-[0_4px_0_var(--color-game-purple-dark)] translate-y-[-2px]"
                       : "bg-zinc-100 dark:bg-zinc-800 text-[var(--color-text-muted)] border-transparent"
-                    }`}
+                  }`}
                 >
                   {v}
                 </button>
@@ -395,10 +452,20 @@ function EditMessageModal({
           </div>
 
           <div className="flex gap-4 pt-2">
-            <GameButton type="button" color="gray" onClick={onClose} className="flex-1">
+            <GameButton
+              type="button"
+              color="gray"
+              onClick={onClose}
+              className="flex-1"
+            >
               Cancel
             </GameButton>
-            <GameButton type="submit" color="purple" disabled={loading} className="flex-1">
+            <GameButton
+              type="submit"
+              color="purple"
+              disabled={loading}
+              className="flex-1"
+            >
               {loading ? "Saving..." : "Save"}
             </GameButton>
           </div>
@@ -424,7 +491,8 @@ function CollectionCard({
   onDetail: () => void;
 }) {
   const loc = getItemLocation(item);
-  const isCreator = item.kind === "created-message" || item.kind === "created-chest";
+  const isCreator =
+    item.kind === "created-message" || item.kind === "created-chest";
   const center: [number, number] | null = loc
     ? [loc.latitude, loc.longitude]
     : null;
@@ -439,8 +507,11 @@ function CollectionCard({
           : Trophy;
 
   const color =
-    item.kind === "created-message" && "markerColor" in item.data && item.data.markerColor
-      ? markerColors[item.data.markerColor as keyof typeof markerColors] ?? gameColors.purple
+    item.kind === "created-message" &&
+    "markerColor" in item.data &&
+    item.data.markerColor
+      ? (markerColors[item.data.markerColor as keyof typeof markerColors] ??
+        gameColors.purple)
       : item.kind === "created-chest"
         ? gameColors.gold
         : item.kind === "found-chest"
@@ -455,10 +526,11 @@ function CollectionCard({
       initial={false}
       animate={{ height: "auto" }}
       transition={{ type: "spring", damping: 30, stiffness: 300 }}
-      className={`rounded-2xl border-4 transition-all duration-200 overflow-hidden ${isExpanded
+      className={`rounded-2xl border-4 transition-all duration-200 overflow-hidden ${
+        isExpanded
           ? "border-[var(--color-game-purple)] shadow-[0_8px_0_var(--color-game-purple-dark)] mb-4"
           : "border-[var(--color-border)] bg-[var(--color-bg-primary)] shadow-[0_4px_0_var(--color-border)]"
-        }`}
+      }`}
     >
       <button
         onClick={onToggle}
@@ -466,7 +538,10 @@ function CollectionCard({
       >
         <div className="flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
           {center ? (
-            <MiniMap location={{ latitude: center[0], longitude: center[1] }} className="h-full w-full" />
+            <MiniMap
+              location={{ latitude: center[0], longitude: center[1] }}
+              className="h-full w-full"
+            />
           ) : (
             <div className="h-full w-full flex items-center justify-center bg-[var(--color-bg-secondary)]">
               <Icon className="w-6 h-6 text-[var(--color-text-muted)]" />
@@ -528,7 +603,10 @@ function CollectionCard({
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CopyCoordsButton lat={loc.latitude} lng={loc.longitude} />
+                      <CopyCoordsButton
+                        lat={loc.latitude}
+                        lng={loc.longitude}
+                      />
                       {isCreator && onEdit && (
                         <button
                           type="button"
@@ -576,7 +654,7 @@ function CollectionCard({
 }
 
 export function MyCollectionPage() {
-  const { userId } = useUserStore();
+  const { userId } = useAuthStore();
   const { data, isLoading } = useMyItemsQuery(userId ?? undefined);
   const deleteMessageMutation = useDeleteMessageMutation();
   const deleteChestMutation = useDeleteChestMutation();
@@ -592,12 +670,18 @@ export function MyCollectionPage() {
   const items: CollectionItem[] = [];
   if (data) {
     data.createdMessages.forEach((m) =>
-      items.push({ kind: "created-message", data: m })
+      items.push({ kind: "created-message", data: m }),
     );
-    data.createdChests.forEach((c) => items.push({ kind: "created-chest", data: c }));
-    data.foundChests.forEach((f) => items.push({ kind: "found-chest", data: f }));
+    data.createdChests.forEach((c) =>
+      items.push({ kind: "created-chest", data: c }),
+    );
+    data.foundChests.forEach((f) =>
+      items.push({ kind: "found-chest", data: f }),
+    );
     data.foundLoot.forEach((f) => items.push({ kind: "found-loot", data: f }));
-    data.foundMessages?.forEach((m) => items.push({ kind: "found-message", data: m }));
+    data.foundMessages?.forEach((m) =>
+      items.push({ kind: "found-message", data: m }),
+    );
   }
 
   const getItemId = (item: CollectionItem) =>
@@ -617,12 +701,22 @@ export function MyCollectionPage() {
     if (item.kind === "created-message") {
       deleteMessageMutation.mutate(
         { id: item.data.id, userId },
-        { onSettled: () => { setDeleteConfirm(null); resolve(); } }
+        {
+          onSettled: () => {
+            setDeleteConfirm(null);
+            resolve();
+          },
+        },
       );
     } else if (item.kind === "created-chest") {
       deleteChestMutation.mutate(
         { id: item.data.id, userId },
-        { onSettled: () => { setDeleteConfirm(null); resolve(); } }
+        {
+          onSettled: () => {
+            setDeleteConfirm(null);
+            resolve();
+          },
+        },
       );
     }
     setDetailItem(null);
@@ -668,7 +762,9 @@ export function MyCollectionPage() {
                 item={item}
                 isExpanded={expandedId === getItemId(item)}
                 onToggle={() =>
-                  setExpandedId((id) => (id === getItemId(item) ? null : getItemId(item)))
+                  setExpandedId((id) =>
+                    id === getItemId(item) ? null : getItemId(item),
+                  )
                 }
                 onEdit={
                   item.kind === "created-message"
@@ -676,7 +772,8 @@ export function MyCollectionPage() {
                     : undefined
                 }
                 onDelete={
-                  item.kind === "created-message" || item.kind === "created-chest"
+                  item.kind === "created-message" ||
+                  item.kind === "created-chest"
                     ? () => handleDelete(item)
                     : undefined
                 }
@@ -695,18 +792,20 @@ export function MyCollectionPage() {
             onEdit={
               detailItem.kind === "created-message"
                 ? () => {
-                  setDetailItem(null);
-                  setEditingMsg(detailItem.data);
-                }
+                    setDetailItem(null);
+                    setEditingMsg(detailItem.data);
+                  }
                 : undefined
             }
             onDelete={
-              (detailItem.kind === "created-message" || detailItem.kind === "created-chest")
+              detailItem.kind === "created-message" ||
+              detailItem.kind === "created-chest"
                 ? () => handleDelete(detailItem)
                 : undefined
             }
             isCreator={
-              detailItem.kind === "created-message" || detailItem.kind === "created-chest"
+              detailItem.kind === "created-message" ||
+              detailItem.kind === "created-chest"
             }
           />
         )}

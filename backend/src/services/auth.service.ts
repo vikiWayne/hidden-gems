@@ -10,6 +10,8 @@ import {
   getUserByUsername,
   getUserById,
 } from "../db/repositories/users.repository.js";
+import { AppError, ValidationError } from "../lib/errors.js";
+import { getErrorMessage } from "../config/errorMessages.js";
 
 const JWT_SECRET =
   process.env.JWT_SECRET || "dev-secret-key-change-in-production";
@@ -38,17 +40,17 @@ export const authService = {
   ): Promise<AuthToken> {
     // Validate input
     if (!username || !password || !fullName) {
-      throw new Error("Username, password, and full name are required");
+      throw new ValidationError(getErrorMessage("AUTH_FIELD_REQUIRED"));
     }
 
     if (password.length < 8) {
-      throw new Error("Password must be at least 8 characters");
+      throw new ValidationError(getErrorMessage("AUTH_PASSWORD_WEAK"));
     }
 
     // Check if username already exists
     const existingUser = getUserByUsername(username);
     if (existingUser) {
-      throw new Error("Username already taken");
+      throw new ValidationError(getErrorMessage("AUTH_USERNAME_TAKEN"));
     }
 
     // Hash password
@@ -70,12 +72,16 @@ export const authService = {
    */
   async login(username: string, password: string): Promise<AuthToken> {
     if (!username || !password) {
-      throw new Error("Username and password are required");
+      throw new ValidationError(getErrorMessage("AUTH_MISSING_CREDENTIALS"));
     }
 
     const user = getUserByUsername(username);
     if (!user) {
-      throw new Error("Invalid username or password");
+      throw new AppError(
+        getErrorMessage("AUTH_INVALID_CREDENTIALS"),
+        401,
+        "AUTH_INVALID_CREDENTIALS",
+      );
     }
 
     // Verify password
@@ -84,7 +90,11 @@ export const authService = {
       user.passwordHash as string,
     );
     if (!validPassword) {
-      throw new Error("Invalid username or password");
+      throw new AppError(
+        getErrorMessage("AUTH_INVALID_CREDENTIALS"),
+        401,
+        "AUTH_INVALID_CREDENTIALS",
+      );
     }
 
     // Generate token
@@ -106,7 +116,11 @@ export const authService = {
       const decoded = jwt.verify(token, JWT_SECRET) as AuthUser;
       return decoded;
     } catch (err) {
-      throw new Error("Invalid or expired token");
+      throw new AppError(
+        getErrorMessage("AUTH_INVALID_TOKEN"),
+        401,
+        "AUTH_INVALID_TOKEN",
+      );
     }
   },
 

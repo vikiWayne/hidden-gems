@@ -3,6 +3,7 @@
  */
 
 import { apiClient } from "./axios";
+import type { APISuccessResponse } from "./types/common";
 import type {
   GetNearbyMessagesParams,
   CreateMessageRequest,
@@ -15,7 +16,10 @@ import type {
   GetMapViewportParams,
   GetMapNearbyParams,
 } from "./types/requests";
-import type { GetMyItemsResponse } from "./types/responses";
+import type {
+  GetMyItemsResponse,
+  LeaderBoardResponse,
+} from "./types/responses";
 import {
   getNearbyMessagesResponseSchema,
   createMessageResponseSchema,
@@ -92,7 +96,8 @@ export const api = {
 
   getLeaderboard: async () => {
     const { data } = await apiClient.get("/leaderboard");
-    return getLeaderboardResponseSchema.parse(data);
+    // return getLeaderboardResponseSchema.parse(data);
+    return data.data as LeaderBoardResponse;
   },
 
   seedNearby: async (body: SeedNearbyRequest) => {
@@ -166,21 +171,24 @@ export const api = {
   getMapConfig: async () => {
     const { data } = await apiClient.get("/map/config");
     return data as {
-      penalty: { xpDrop: number; coinDrop: number };
-      lootItems: Record<
-        string,
-        {
-          label: string;
-          icon: string;
-          xpReward: number;
-          coinReward: number;
-          isPenalty: boolean;
-        }
-      >;
-      geo: {
-        NEARBY_RADIUS_M: number;
-        UNLOCK_DISTANCE_M: number;
-        CHEST_HUNTER_RADIUS_M: number;
+      status: "success";
+      data: {
+        penalty: { xpDrop: number; coinDrop: number };
+        lootItems: Record<
+          string,
+          {
+            label: string;
+            icon: string;
+            xpReward: number;
+            coinReward: number;
+            isPenalty: boolean;
+          }
+        >;
+        geo: {
+          NEARBY_RADIUS_M: number;
+          UNLOCK_DISTANCE_M: number;
+          CHEST_HUNTER_RADIUS_M: number;
+        };
       };
     };
   },

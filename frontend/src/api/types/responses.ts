@@ -3,6 +3,7 @@
  */
 
 import type { NearbyMessage } from "@/types";
+import type { APISuccessResponse } from "./common";
 
 export interface NearbyChest {
   id: string;
@@ -165,3 +166,13 @@ export interface GetMyItemsResponse {
   foundLoot: FoundLootItem[];
   foundMessages: FoundMessageItem[];
 }
+
+type LeaderBoardItem = {
+  rank: number;
+  username: string;
+  xp: number;
+  discovered: number;
+  chestsFound: number;
+};
+
+export type LeaderBoardResponse = APISuccessResponse<LeaderBoardItem[]>;

@@ -1,11 +1,11 @@
-import { useCreateMessageMutation, useCreateChestMutation } from "@/services";
+import { AuthModal } from "@/components/AuthModal";
 import { GameButton } from "@/components/GameButton";
 import { MentionInput } from "@/components/MentionInput";
-import { useAppStore } from "@/store/useAppStore";
-import { useMyTagsStore } from "@/store/useMyTagsStore";
-import { useUserStore } from "@/store/useUserStore";
 import { useAuth } from "@/contexts/AuthContext";
-import { AuthModal } from "@/components/AuthModal";
+import { useCreateChestMutation, useCreateMessageMutation } from "@/services";
+import { useAppStore } from "@/store/useAppStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useMyTagsStore } from "@/store/useMyTagsStore";
 import type { CreatedMessage, MarkerColor, MessageType } from "@/types";
 import { motion } from "framer-motion";
 import {
@@ -37,7 +37,7 @@ function blobToBase64(blob: Blob): Promise<string> {
 export function DropMessageModal({ onClose }: DropMessageModalProps) {
   const { userLocation } = useAppStore();
   const { addMessage } = useMyTagsStore();
-  const { userId } = useUserStore();
+  const { userId } = useAuthStore();
   const { isAuthenticated } = useAuth();
   const createMessage = useCreateMessageMutation();
   const createChest = useCreateChestMutation();
@@ -173,7 +173,7 @@ export function DropMessageModal({ onClose }: DropMessageModalProps) {
     if (!userLocation) return;
 
     // Check authentication before proceeding
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !userId) {
       setShowAuthModal(true);
       return;
     }

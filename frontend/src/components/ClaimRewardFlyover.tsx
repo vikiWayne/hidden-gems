@@ -8,18 +8,31 @@ import { api } from "@/api/client";
 import { Award } from "lucide-react";
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import type { GetMapViewportResponse, GetMyItemsResponse } from "@/api/types/responses";
+import type {
+  GetMapViewportResponse,
+  GetMyItemsResponse,
+} from "@/api/types/responses";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const ANIMATION_DURATION_MS = 1200;
 const COIN_COUNT = 8;
 
 function playClaimSound() {
   try {
-    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)();
+    const ctx = new (
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext
+    )();
     const now = ctx.currentTime;
 
     // Gold coin "bling" - two-tone chime
-    const playTone = (freq: number, start: number, duration: number, gain: number) => {
+    const playTone = (
+      freq: number,
+      start: number,
+      duration: number,
+      gain: number,
+    ) => {
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
       osc.connect(g);
@@ -63,7 +76,15 @@ const GoldCoin = ({ id }: { id: number }) => (
       stroke="#d4a017"
       strokeWidth="1.5"
     />
-    <circle cx="12" cy="12" r="6" fill="none" stroke="#fbbf24" strokeWidth="1" opacity="0.6" />
+    <circle
+      cx="12"
+      cy="12"
+      r="6"
+      fill="none"
+      stroke="#fbbf24"
+      strokeWidth="1"
+      opacity="0.6"
+    />
   </svg>
 );
 
@@ -76,7 +97,8 @@ export function ClaimRewardFlyover() {
     setProximityState,
     isMessageOpened,
   } = useAppStore();
-  const { addXp, addCoins, userId } = useUserStore();
+  const { addXp, addCoins } = useUserStore();
+  const { userId } = useAuthStore();
   const { claimChest } = useGameStore();
   const unlockDistance = useRuntimeConfigStore((s) => s.geo.UNLOCK_DISTANCE_M);
   const queryClient = useQueryClient();
@@ -90,7 +112,9 @@ export function ClaimRewardFlyover() {
     addCoins(claimAnimation.coins);
     if (claimAnimation.chestId && userId) {
       const { nearbyChests } = useGameStore.getState();
-      const claimedChest = nearbyChests.find((c) => c.id === claimAnimation.chestId);
+      const claimedChest = nearbyChests.find(
+        (c) => c.id === claimAnimation.chestId,
+      );
 
       try {
         await api.claimChest(claimAnimation.chestId, userId);
@@ -99,10 +123,12 @@ export function ClaimRewardFlyover() {
           (prev: GetMapViewportResponse | undefined) =>
             prev
               ? {
-                ...prev,
-                chests: prev.chests.filter((c) => c.id !== claimAnimation.chestId),
-              }
-              : prev
+                  ...prev,
+                  chests: prev.chests.filter(
+                    (c) => c.id !== claimAnimation.chestId,
+                  ),
+                }
+              : prev,
         );
         queryClient.setQueriesData(
           { queryKey: ["users", "me", "items"] },
@@ -122,7 +148,7 @@ export function ClaimRewardFlyover() {
                 ...prev.foundChests,
               ],
             };
-          }
+          },
         );
       } catch {
         addXp(-claimAnimation.xp);
@@ -131,14 +157,21 @@ export function ClaimRewardFlyover() {
         return;
       }
       claimChest(claimAnimation.chestId);
-      queryClient.invalidateQueries({ queryKey: ["users", "me", "items", userId] });
+      queryClient.invalidateQueries({
+        queryKey: ["users", "me", "items", userId],
+      });
       queryClient.invalidateQueries({ queryKey: ["map"] });
 
       // Select next nearest item (message or chest)
       const { nearbyMessages } = useAppStore.getState();
-      const unopenedMessages = nearbyMessages.filter((m) => !isMessageOpened(m.id));
+      const unopenedMessages = nearbyMessages.filter(
+        (m) => !isMessageOpened(m.id),
+      );
       const items = [
-        ...unopenedMessages.map((m) => ({ ...m, itemType: "message" as const })),
+        ...unopenedMessages.map((m) => ({
+          ...m,
+          itemType: "message" as const,
+        })),
         ...nearbyChests.map((c) => ({ ...c, itemType: "chest" as const })),
       ]
         .filter((i) => (i.distance ?? Infinity) <= 300)
@@ -154,7 +187,7 @@ export function ClaimRewardFlyover() {
               ? "unlocked"
               : dist <= unlockDistance * 2
                 ? "near"
-                : "far"
+                : "far",
           );
         } else {
           setSelectedMessage(null);
@@ -199,17 +232,19 @@ export function ClaimRewardFlyover() {
     return () => clearTimeout(t);
   }, [claimAnimation, applyReward]);
 
-  const [coinOffsets] = useState<{ x: number, y: number }[]>(() =>
+  const [coinOffsets] = useState<{ x: number; y: number }[]>(() =>
     Array.from({ length: COIN_COUNT }).map(() => ({
       x: (Math.random() - 0.5) * 24,
       y: (Math.random() - 0.5) * 24,
-    }))
+    })),
   );
 
   if (!claimAnimation) return null;
 
   const fromRect = claimAnimation.fromRect;
-  const toXp = document.getElementById("header-xp-badge")?.getBoundingClientRect();
+  const toXp = document
+    .getElementById("header-xp-badge")
+    ?.getBoundingClientRect();
 
   const startX = fromRect.left + fromRect.width / 2;
   const startY = fromRect.top + fromRect.height / 2;
@@ -268,8 +303,7 @@ export function ClaimRewardFlyover() {
           }}
           className="fixed -translate-x-1/2 -translate-y-1/2 flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-game-purple)] text-white font-black text-sm shadow-lg"
         >
-          <Award className="w-4 h-4" />
-          +{claimAnimation.xp} XP
+          <Award className="w-4 h-4" />+{claimAnimation.xp} XP
         </motion.div>
       </motion.div>
     </AnimatePresence>,

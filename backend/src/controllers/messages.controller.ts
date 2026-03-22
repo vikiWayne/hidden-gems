@@ -1,6 +1,9 @@
 import type { RequestHandler } from "express";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 import { messagesService } from "../services/messages.service.js";
+import { sendSuccess } from "../lib/response.js";
+import { ForbiddenError } from "../lib/errors.js";
+import { getErrorMessage } from "../config/errorMessages.js";
 
 export const getNearbyMessagesController: RequestHandler = (req, res) => {
   const { lat, lng, alt, userId } = res.locals.validated.query as {
@@ -10,7 +13,7 @@ export const getNearbyMessagesController: RequestHandler = (req, res) => {
     userId?: string;
   };
   const messages = messagesService.getNearby(lat, lng, alt, userId);
-  res.json({ messages });
+  return sendSuccess(200, res, { messages });
 };
 
 export const createMessageController: RequestHandler = (
@@ -23,7 +26,7 @@ export const createMessageController: RequestHandler = (
   // Override createdBy with authenticated userId
   payload.createdBy = req.userId;
   const message = messagesService.create(payload);
-  res.status(201).json({ message: { id: message.id } });
+  return sendSuccess(201, res, { message: { id: message.id } });
 };
 
 export const getMessageController: RequestHandler = (req, res) => {
@@ -34,7 +37,7 @@ export const getMessageController: RequestHandler = (req, res) => {
     userId?: string;
   };
   const result = messagesService.getById(id, lat, lng, userId);
-  res.json(result);
+  return sendSuccess(200, res, result);
 };
 
 export const updateMessageController: RequestHandler = (
@@ -47,12 +50,10 @@ export const updateMessageController: RequestHandler = (
   >[1];
   // Verify ownership
   if (!messagesService.isOwner(id, req.userId!)) {
-    return res
-      .status(403)
-      .json({ error: "Unauthorized: You can only update your own messages" });
+    throw new ForbiddenError(getErrorMessage("MESSAGES_UNAUTHORIZED_UPDATE"));
   }
   const updated = messagesService.update(id, payload);
-  res.json({ message: updated });
+  return sendSuccess(200, res, { message: updated });
 };
 
 export const deleteMessageController: RequestHandler = (
@@ -62,10 +63,8 @@ export const deleteMessageController: RequestHandler = (
   const { id } = res.locals.validated.params as { id: string };
   // Verify ownership
   if (!messagesService.isOwner(id, req.userId!)) {
-    return res
-      .status(403)
-      .json({ error: "Unauthorized: You can only delete your own messages" });
+    throw new ForbiddenError(getErrorMessage("MESSAGES_UNAUTHORIZED_DELETE"));
   }
   messagesService.remove(id, req.userId!);
-  res.status(204).send();
+  return sendSuccess(204, res, null);
 };

@@ -5,6 +5,9 @@
 import type { RequestHandler } from "express";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 import { authService } from "../services/auth.service.js";
+import { sendSuccess } from "../lib/response.js";
+import { AppError } from "../lib/errors.js";
+import { getErrorMessage } from "../config/errorMessages.js";
 
 /**
  * Register a new user
@@ -18,14 +21,9 @@ export const register: RequestHandler = async (req, res) => {
     fullName: string;
   };
 
-  // Register user
   const result = await authService.registerUser(username, password, fullName);
 
-  return res.status(201).json({
-    userId: result.userId,
-    token: result.token,
-    user: result.user,
-  });
+  return sendSuccess(201, res, result);
 };
 
 /**
@@ -41,11 +39,7 @@ export const login: RequestHandler = async (req, res) => {
 
   const result = await authService.login(username, password);
 
-  return res.status(200).json({
-    userId: result.userId,
-    token: result.token,
-    user: result.user,
-  });
+  return sendSuccess(200, res, result);
 };
 
 /**
@@ -58,10 +52,14 @@ export const getCurrentUser: RequestHandler = (
   res,
 ) => {
   if (!req.user) {
-    return res.status(401).json({ error: "Not authenticated" });
+    throw new AppError(
+      getErrorMessage("AUTH_NOT_AUTHENTICATED"),
+      401,
+      "AUTH_NOT_AUTHENTICATED",
+    );
   }
 
-  return res.status(200).json(req.user);
+  return sendSuccess(200, res, req.user);
 };
 
 /**
@@ -74,7 +72,7 @@ export const checkUsernameAvailable: RequestHandler = (req, res) => {
 
   const available = authService.checkUsernameAvailable(username);
 
-  return res.status(200).json({
+  return sendSuccess(200, res, {
     username,
     available,
   });

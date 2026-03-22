@@ -1,11 +1,12 @@
 import { LeadCard, Spinner } from "@/components/ui";
-import { useLeaderboardQuery } from "@/services";
+import { useGetLeaderboard } from "@/services";
 import { motion } from "framer-motion";
 import { Trophy } from "lucide-react";
 
 export function LeaderboardPage() {
-  const { data, isLoading } = useLeaderboardQuery();
-  const leaderboard = data?.leaderboard ?? [];
+  const { data, isLoading } = useGetLeaderboard();
+  const leaderboard = data?.data?.leaderboard ?? [];
+  console.log("Leaderboard data:", data);
 
   if (isLoading) {
     return (
