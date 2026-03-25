@@ -1,5 +1,4 @@
 export { useGetLeaderboard } from "./leaderboardService";
-export { useMapConfigQuery } from "./mapConfigService";
 export { useSearchUsersQuery } from "./usersService";
 export {
   useCreateMessageMutation,

@@ -1,0 +1,1 @@
+export { useGETRequest } from "./useGETRequest";

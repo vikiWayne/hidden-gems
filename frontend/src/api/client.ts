@@ -3,7 +3,7 @@
  */
 
 import { apiClient } from "./axios";
-import type { APISuccessResponse } from "./types/common";
+// import type { APISuccessResponse } from "./types/common";
 import type {
   GetNearbyMessagesParams,
   CreateMessageRequest,
@@ -13,7 +13,7 @@ import type {
   UpdateMessageRequest,
   SeedNearbyRequest,
   SearchUsersParams,
-  GetMapViewportParams,
+  // GetMapViewportParams,
   GetMapNearbyParams,
 } from "./types/requests";
 import type {
@@ -25,7 +25,7 @@ import {
   createMessageResponseSchema,
   getNearbyChestsResponseSchema,
   createChestResponseSchema,
-  getLeaderboardResponseSchema,
+  // getLeaderboardResponseSchema,
   seedNearbyResponseSchema,
   searchUsersResponseSchema,
   getMapViewportResponseSchema,
@@ -152,48 +152,49 @@ export const api = {
     return getMapViewportResponseSchema.parse(data);
   },
 
-  getMapViewport: async (params: GetMapViewportParams) => {
-    const { data } = await apiClient.get(
-      `/map/viewport${buildQuery({
-        minLat: params.minLat,
-        maxLat: params.maxLat,
-        minLng: params.minLng,
-        maxLng: params.maxLng,
-        userId: params.userId,
-        userLat: params.userLat,
-        userLng: params.userLng,
-        filter: params.filter,
-      })}`,
-    );
-    return getMapViewportResponseSchema.parse(data);
-  },
+  // getMapViewport: async (params: GetMapViewportParams) => {
+  //   const { data } = await apiClient.get(
+  //     `/map/viewport${buildQuery({
+  //       minLat: params.minLat,
+  //       maxLat: params.maxLat,
+  //       minLng: params.minLng,
+  //       maxLng: params.maxLng,
+  //       userId: params.userId,
+  //       userLat: params.userLat,
+  //       userLng: params.userLng,
+  //       filter: params.filter,
+  //     })}`,
+  //   );
+  //   return getMapViewportResponseSchema.parse(data);
+  // },
 
-  getMapConfig: async () => {
-    const { data } = await apiClient.get("/map/config");
-    return data as {
-      status: "success";
-      data: {
-        penalty: { xpDrop: number; coinDrop: number };
-        lootItems: Record<
-          string,
-          {
-            label: string;
-            icon: string;
-            xpReward: number;
-            coinReward: number;
-            isPenalty: boolean;
-          }
-        >;
-        geo: {
-          NEARBY_RADIUS_M: number;
-          UNLOCK_DISTANCE_M: number;
-          CHEST_HUNTER_RADIUS_M: number;
-        };
-      };
-    };
-  },
+  // getMapConfig: async () => {
+  //   const { data } = await apiClient.get("/map/config");
+  //   return data as {
+  //     status: "success";
+  //     data: {
+  //       penalty: { xpDrop: number; coinDrop: number };
+  //       lootItems: Record<
+  //         string,
+  //         {
+  //           label: string;
+  //           icon: string;
+  //           xpReward: number;
+  //           coinReward: number;
+  //           isPenalty: boolean;
+  //         }
+  //       >;
+  //       geo: {
+  //         NEARBY_RADIUS_M: number;
+  //         UNLOCK_DISTANCE_M: number;
+  //         CHEST_HUNTER_RADIUS_M: number;
+  //       };
+  //     };
+  //   };
+  // },
 
   // Auth API methods
+
   register: async (username: string, password: string, fullName: string) => {
     const { data } = await apiClient.post("/auth/register", {
       username,

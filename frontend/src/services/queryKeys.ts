@@ -4,6 +4,7 @@
 
 export const queryKeys = {
   leaderboard: ["leaderboard"] as const,
+  mapConfig: ["map", "config"] as const,
   searchUsers: (q: string) => ["users", "search", q] as const,
   nearbyMessages: (lat: number, lng: number, userId?: string) =>
     ["messages", "nearby", lat, lng, userId] as const,

@@ -1,0 +1,1 @@
+export { useGetMapConfig } from "./useGetMapConfig";
