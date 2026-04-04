@@ -6,37 +6,19 @@ import { apiClient } from "./axios";
 // import type { APISuccessResponse } from "./types/common";
 import type {
   GetNearbyMessagesParams,
-  CreateMessageRequest,
-  GetMessageParams,
   GetNearbyChestsParams,
-  CreateChestRequest,
-  UpdateMessageRequest,
   SeedNearbyRequest,
-  SearchUsersParams,
-  // GetMapViewportParams,
   GetMapNearbyParams,
 } from "./types/requests";
-import type {
-  GetMyItemsResponse,
-  LeaderBoardResponse,
-} from "./types/responses";
+
 import {
   getNearbyMessagesResponseSchema,
-  createMessageResponseSchema,
   getNearbyChestsResponseSchema,
-  createChestResponseSchema,
-  // getLeaderboardResponseSchema,
   seedNearbyResponseSchema,
-  searchUsersResponseSchema,
   getMapViewportResponseSchema,
 } from "./validators";
 
-export type {
-  NearbyChest,
-  NearbyLootItem,
-  LeaderboardEntry,
-  SearchUser,
-} from "./types/responses";
+export type { NearbyChest, NearbyLootItem } from "./types/responses";
 
 function buildQuery(
   params: Record<string, string | number | undefined>,
@@ -62,22 +44,6 @@ export const api = {
     return getNearbyMessagesResponseSchema.parse(data);
   },
 
-  createMessage: async (body: CreateMessageRequest) => {
-    const { data } = await apiClient.post("/messages", body);
-    return createMessageResponseSchema.parse(data);
-  },
-
-  getMessage: async (params: GetMessageParams) => {
-    const { data } = await apiClient.get(
-      `/messages/${params.id}${buildQuery({
-        lat: params.lat,
-        lng: params.lng,
-        userId: params.userId,
-      })}`,
-    );
-    return data as { message: unknown; unlocked: boolean };
-  },
-
   getNearbyChests: async (params: GetNearbyChestsParams) => {
     const { data } = await apiClient.get(
       `/chests/nearby${buildQuery({
@@ -89,55 +55,9 @@ export const api = {
     return getNearbyChestsResponseSchema.parse(data);
   },
 
-  createChest: async (body: CreateChestRequest) => {
-    const { data } = await apiClient.post("/chests", body);
-    return createChestResponseSchema.parse(data);
-  },
-
-  getLeaderboard: async () => {
-    const { data } = await apiClient.get("/leaderboard");
-    // return getLeaderboardResponseSchema.parse(data);
-    return data.data as LeaderBoardResponse;
-  },
-
   seedNearby: async (body: SeedNearbyRequest) => {
     const { data } = await apiClient.post("/seed", body);
     return seedNearbyResponseSchema.parse(data);
-  },
-
-  updateMessage: async (id: string, body: UpdateMessageRequest) => {
-    const { data } = await apiClient.patch(`/messages/${id}`, body);
-    return data as { message: unknown };
-  },
-
-  deleteMessage: async (id: string, userId: string) => {
-    await apiClient.delete(`/messages/${id}${buildQuery({ userId })}`);
-  },
-
-  deleteChest: async (id: string, userId: string) => {
-    await apiClient.delete(`/chests/${id}${buildQuery({ userId })}`);
-  },
-
-  claimChest: async (id: string, userId: string) => {
-    const { data } = await apiClient.post(`/chests/${id}/claim`, { userId });
-    return data as { ok: boolean; finderOrdinal: number };
-  },
-
-  getMyItems: async (userId: string) => {
-    const { data } = await apiClient.get(
-      `/users/me/items${buildQuery({ userId })}`,
-    );
-    return data as GetMyItemsResponse;
-  },
-
-  searchUsers: async (params: SearchUsersParams) => {
-    const { data } = await apiClient.get(
-      `/users/search${buildQuery({
-        q: params.q,
-        limit: params.limit ?? 5,
-      })}`,
-    );
-    return searchUsersResponseSchema.parse(data);
   },
 
   getMapNearby: async (params: GetMapNearbyParams) => {
@@ -150,6 +70,11 @@ export const api = {
       })}`,
     );
     return getMapViewportResponseSchema.parse(data);
+  },
+
+  // Alias for backward compatibility
+  getMapViewport: async (params: GetMapNearbyParams) => {
+    return api.getMapNearby(params);
   },
 
   // getMapViewport: async (params: GetMapViewportParams) => {

@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUserStore } from "@/store/useUserStore";
-import { useSearchUsersQuery } from "@/services";
+import { useSearchUsers } from "@/services";
 
 interface MentionInputProps {
   value: string;
@@ -33,7 +33,7 @@ export function MentionInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const deferredMentionQuery = useDeferredValue(mentionQuery);
 
-  const { data: searchedUsers } = useSearchUsersQuery(
+  const { data: searchedUsers } = useSearchUsers(
     deferredMentionQuery,
     showSuggestions && deferredMentionQuery.length > 0,
   );

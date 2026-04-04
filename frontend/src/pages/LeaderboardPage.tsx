@@ -5,7 +5,7 @@ import { Trophy } from "lucide-react";
 
 export function LeaderboardPage() {
   const { data, isLoading } = useGetLeaderboard();
-  const leaderboard = data?.data?.leaderboard ?? [];
+  const leaderboard = (data?.data as any[]) ?? [];
   console.log("Leaderboard data:", data);
 
   if (isLoading) {

@@ -1,9 +1,9 @@
 /**
- * API response types - single source of truth for response payloads
+ * API response types - shared across multiple services
+ * Entity-specific response types are defined in service-specific /types/response.ts files
  */
 
 import type { NearbyMessage } from "@/types";
-import type { APISuccessResponse } from "./common";
 
 export interface NearbyChest {
   id: string;
@@ -42,48 +42,25 @@ export interface NearbyLootItem {
   isOwn?: boolean;
 }
 
+/**
+ * Combined map viewport response - used for optimistic updates across messages/chests/loot services
+ */
 export interface GetMapViewportResponse {
   messages: NearbyMessage[];
   chests: NearbyChest[];
   lootItems: NearbyLootItem[];
 }
 
-export interface LeaderboardEntry {
-  rank: number;
-  username: string;
-  xp: number;
-  discovered: number;
-  chestsFound: number;
-}
-
-export interface SearchUser {
-  id: string;
-  username: string;
-}
-
-export interface GetNearbyMessagesResponse {
-  messages: NearbyMessage[];
-}
-
-export interface CreateMessageResponse {
-  message: { id: string };
-}
-
-export interface GetMessageResponse {
-  message: unknown;
-  unlocked: boolean;
-}
-
-export interface GetNearbyChestsResponse {
-  chests: NearbyChest[];
-}
-
-export interface CreateChestResponse {
-  chest: { id: string };
-}
-
-export interface GetLeaderboardResponse {
-  leaderboard: LeaderboardEntry[];
+/**
+ * My items response - combines created and found items from multiple services
+ * Used by mutation handlers for optimistic updates
+ */
+export interface GetMyItemsResponse {
+  createdMessages: any; // CreatedMessageItem from messagesService
+  createdChests: any; // CreatedChestItem from chestsService
+  foundChests: any; // FoundChestItem from chestsService
+  foundLoot: any; // FoundLootItem from myItemsService
+  foundMessages: any; // FoundMessageItem from myItemsService
 }
 
 export interface SeedNearbyResponse {
@@ -91,88 +68,3 @@ export interface SeedNearbyResponse {
   messages: number;
   chests: number;
 }
-
-export interface UpdateMessageResponse {
-  message: unknown;
-}
-
-export interface SearchUsersResponse {
-  users: SearchUser[];
-}
-
-export interface CreatedMessageItem {
-  id: string;
-  type: "text" | "voice" | "image" | "video";
-  content: string;
-  mediaUrl?: string;
-  latitude: number;
-  longitude: number;
-  altitude?: number;
-  visibility: "public" | "private";
-  allowedUserIds: string[];
-  category?: string;
-  markerColor?: string;
-  createdBy?: string;
-  createdAt: string;
-}
-
-export interface CreatedChestItem {
-  id: string;
-  content: string;
-  latitude: number;
-  longitude: number;
-  altitude?: number;
-  xpReward: number;
-  coinReward?: number;
-  variant?: "normal" | "snake";
-  createdBy?: string;
-  createdAt: string;
-}
-
-export interface FoundChestItem {
-  id: string;
-  itemId: string;
-  content: string;
-  xpReward: number;
-  finderOrdinal: number;
-  foundAt: string;
-}
-
-export interface FoundLootItem {
-  id: string;
-  itemId: string;
-  type: string;
-  content: string;
-  xpReward: number;
-  coinReward: number;
-  finderOrdinal: number;
-  foundAt: string;
-}
-
-export interface FoundMessageItem {
-  id: string;
-  itemId: string;
-  type: string;
-  content: string;
-  foundAt: string;
-  latitude: number;
-  longitude: number;
-}
-
-export interface GetMyItemsResponse {
-  createdMessages: CreatedMessageItem[];
-  createdChests: CreatedChestItem[];
-  foundChests: FoundChestItem[];
-  foundLoot: FoundLootItem[];
-  foundMessages: FoundMessageItem[];
-}
-
-type LeaderBoardItem = {
-  rank: number;
-  username: string;
-  xp: number;
-  discovered: number;
-  chestsFound: number;
-};
-
-export type LeaderBoardResponse = APISuccessResponse<LeaderBoardItem[]>;

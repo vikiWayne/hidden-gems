@@ -1,13 +1,10 @@
 export { useGetLeaderboard } from "./leaderboardService";
-export { useSearchUsersQuery } from "./usersService";
+export { useSearchUsers } from "./usersService";
 export {
   useCreateMessageMutation,
   useUpdateMessageMutation,
-} from "./messagesService";
-export { useCreateChestMutation } from "./chestsService";
-export {
-  useMyItemsQuery,
   useDeleteMessageMutation,
-  useDeleteChestMutation,
-} from "./myItemsService";
+} from "./messagesService/index";
+export { useCreateChestMutation, useDeleteChestMutation } from "./chestsService/index";
+export { useMyItemsQuery } from "./myItemsService/index";
 export { queryKeys } from "./queryKeys";

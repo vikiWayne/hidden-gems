@@ -4,7 +4,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { useUserStore } from "@/store/useUserStore";
 import { useGameStore } from "@/store/useGameStore";
 import { useRuntimeConfigStore } from "@/store/useRuntimeConfigStore";
-import { api } from "@/api/client";
+import { claimChest } from "@/services/chestsService/chests.service";
 import { Award } from "lucide-react";
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -117,7 +117,7 @@ export function ClaimRewardFlyover() {
       );
 
       try {
-        await api.claimChest(claimAnimation.chestId, userId);
+        await claimChest(claimAnimation.chestId, userId);
         queryClient.setQueriesData(
           { queryKey: ["map"] },
           (prev: GetMapViewportResponse | undefined) =>
